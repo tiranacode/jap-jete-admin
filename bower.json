@@ -1,0 +1,21 @@
+{
+  "name": "jap-jete-admin",
+  "description": "Backend & website per aplikacionin e dhurimit te gjakut \"Jap Jetë\"",
+  "main": "",
+  "authors": [
+    "> tirana code_"
+  ],
+  "homepage": "https://github.com/tiranacode/jap-jete-admin",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "./webapp/static/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "~0.14.7",
+    "jquery": "^2.2.0"
+  }
+}

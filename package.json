@@ -1,0 +1,17 @@
+{
+  "name": "jap-jete-admin",
+  "version": "1.0.0",
+  "description": "Backend & website per aplikacionin e dhurimit te gjakut \"Jap Jetë\"",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aziflaj/jap-jete-admin.git"
+  },
+  "author": "> tirana code_",
+  "bugs": {
+    "url": "https://github.com/tiranacode/jap-jete-admin/issues"
+  },
+  "homepage": "https://github.com/tiranacode/jap-jete-admin#readme",
+  "devDependencies": {
+    "bower": "^1.7.7"
+  }
+}
