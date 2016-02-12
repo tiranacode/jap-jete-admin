@@ -1,4 +1,4 @@
-decorator==4.0.7
+decorator==4.0.8
 Flask==0.10.1
 itsdangerous==0.24
 Jinja2==2.8

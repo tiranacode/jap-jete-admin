@@ -13,3 +13,9 @@ def version():
     return Response(json.dumps({
         "version": config.API_VERSION,
     }), mimetype='application/json')
+
+@api.route(os.path.join(BASE_PATH, 'hello'))
+def hello():
+    return Response(json.dumps({
+        "message": "Hello, Rreli"
+    }), mimetype='application/json')
