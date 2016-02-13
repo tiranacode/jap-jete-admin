@@ -6,8 +6,6 @@
 </head>
 <body>
   <div id="greeting"></div>
-  <h1>To every action, there is always opposed an equal reaction.</h1>
-  <img src="https://s-media-cache-ak0.pinimg.com/564x/53/e4/14/53e4144326d7196e0102badc23ca45f4.jpg" alt="Newton's III law of (e)motion" />
 
 
   <!-- Dependencies for React and the API client -->
@@ -16,40 +14,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <!-- React.js fetching data from the API service -->
-  <script type="text/babel">
-    var ServerCall = React.createClass({
-      getInitialState: function() {
-        return {
-          message: ''
-        }
-      },
-
-      componentDidMount: function() {
-        this.serverRequest = $.get(this.props.source, function(result) {
-          this.setState({
-            message: result.message
-          });
-        }.bind(this));
-      },
-
-      componentWillUnount: function() {
-        this.serverRequest.abort();
-      },
-
-      render: function() {
-        return (
-          <div>
-            Server says: "{this.state.message}".
-          </div>
-        );
-      }
-    });
-
-    ReactDOM.render(
-      <ServerCall source="/api/v1/hello"/>,
-      document.getElementById('greeting')
-    );
-    // that's it, really
-  </script>
+  <script type="text/babel" src="{{ url_for('webapp.static', filename='jsx/server-call.js') }}"></script>
 </body>
 </html>
