@@ -6,10 +6,16 @@ import config
 
 
 BASE_PATH = os.path.join("/api", "v1")
-api = Blueprint('api', __name__)
+api = Blueprint('api', __name__, url_prefix=BASE_PATH)
 
-@api.route(os.path.join(BASE_PATH, 'version'))
+@api.route('/version/')
 def version():
     return Response(json.dumps({
         "version": config.API_VERSION,
+    }), mimetype='application/json')
+
+@api.route('/hello/')
+def hello():
+    return Response(json.dumps({
+        "message": "To every action, there is always opposed an equal reaction. | Sir Isaac Newton |"
     }), mimetype='application/json')
