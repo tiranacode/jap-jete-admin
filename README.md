@@ -2,21 +2,14 @@
 Backend &amp; website per aplikacionin e dhurimit te gjakut "Jap Jetë"
 
 # Setup
+```bash
+# clone the repo and cd 
+git clone https://github.com/tiranacode/jap-jete-admin.git && cd jap-jete-admin
+# Install virtualenv and create a virtual environment
+pip install virtualenv 
+virtualenv venv
+source venv/bin/activate # activate the virtual environment
+pip install -r requirements.txt # Install required python libraries
+python server.py # start a local server
+```
 
-1. Instalo `virtualenv` dhe krijo nje virtual environment
-    
-    `pip install virtualenv`
-    
-    `virtualenv venv`
-
-2. Aktivizo virtual environment
-    
-    `source venv/bin/activate`
-
-3. Instalo dependencies
-    
-    `pip install -r requirements.txt`
-
-4. Nis serverin
-    
-    `python server.py`
