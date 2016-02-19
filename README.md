@@ -8,8 +8,19 @@ git clone https://github.com/tiranacode/jap-jete-admin.git && cd jap-jete-admin
 # Install virtualenv and create a virtual environment
 pip install virtualenv 
 virtualenv venv
-source venv/bin/activate # activate the virtual environment
-pip install -r requirements.txt # Install required python libraries
-python server.py # start a local server
+# activate the virtual environment
+source venv/bin/activate 
+# Install required python libraries
+pip install -r requirements.txt 
+# start a local server
+python server.py
 ```
 
+# Deployment
+
+```bash 
+# First time deployment:
+fab full_install
+# Deploy code changes
+fab redeploy
+```
