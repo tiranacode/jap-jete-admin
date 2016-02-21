@@ -1,5 +1,5 @@
 boto==2.39.0
-decorator==4.0.7
+decorator==4.0.8
 ecdsa==0.13
 Fabric==1.10.2
 Flask==0.10.1
