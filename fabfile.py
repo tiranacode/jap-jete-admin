@@ -21,7 +21,10 @@ config = {
         'python-pip',
         'ipython',
         'build-essential',
-        'python-dev'
+        'python-dev',
+        'postgresql',
+        'python-psycopg2',
+        'libpq-dev'
     ],
     'region': 'eu-central-1',
     'instance_name': 'tiranacode'
@@ -107,3 +110,19 @@ def full_install():
     install_dependencies()
     install_service()
     restart_service()
+
+    sudo("sudo -u postgres psql")
+    
+@task
+def postgres_init():
+    sudo("psql", user='postgres')
+    # sudo("psql tiranacode")
+    # psql -U user_name -d database_name -h 127.0.0.1 -W
+    
+    # create user dbuser;
+    # create database dbname;
+    # GRANT ALL PERMISIONS ON DATABASE dbname to dbuser;
+    
+    # nano /etc/postgresql/9.3/main/pg_hba.conf
+    # local all all md5
+    
