@@ -27,7 +27,7 @@ def hello():
         "message": "To every action, there is always opposed an equal reaction. | Sir Isaac Newton |"
     })
 
-@api.route('/login/')
+@api.route('/login/', methods=['POST'])
 def login():
     user_id = request.args.get('user_id')
     fb_token = request.args.get('fb_token')
