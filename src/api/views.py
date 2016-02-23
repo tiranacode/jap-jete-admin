@@ -29,8 +29,11 @@ def hello():
 
 @api.route('/login/', methods=['POST'])
 def login():
-    user_id = request.args.get('user_id')
-    fb_token = request.args.get('fb_token')
+    data = json.loads(request.data)
+    user_id = data['user_id']
+    gcmID = data['gcmID']
+    fb_token = data['fb_token']
+
     payload= {
         'access_token': fb_token,
         'fields': 'id'
