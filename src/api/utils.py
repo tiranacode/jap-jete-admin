@@ -26,7 +26,7 @@ def str_equal(str1, str2):
     are_equal = True
     i = 0
     while i < len(str1):
-        if str1[i] != str2[i]:
+        if str1[i] != str2[i] and are_equal:
             are_equal = False
         i += 1
     return are_equal
