@@ -6,7 +6,7 @@ import utils
 import random
 
 from functools import wraps
-from flask import g, request
+from flask import request
 
 def require_login(handler):
     @wraps(handler)
@@ -15,7 +15,7 @@ def require_login(handler):
         user_id = request.args.get('user_id', 0)
         user = session.query(User).filter_by(user_id=user_id).first()
         sleep_amount = random.random()/5
-        if user and utils.str_equal(str(user.session_token), str(session_token)) and \
+        if user and utils.str_equal(user.session_token, session_token) and \
             utils.to_timestamp(user.session_token_expires_at) > time.time():
             return handler(*args, **kwargs)
         else:
