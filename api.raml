@@ -1,0 +1,46 @@
+#%RAML 1.0
+title: JapJeteAPI
+version: v1
+baseUri: http://52.59.251.182/api{version}
+mediaType: application/json
+/user:
+  /{id}:
+    put:
+      description: |
+        Update User Details
+      headers:
+       Authorization:
+         description:
+             Authorization Token
+         type: string
+      body:
+        application/json:
+          schema: |
+            {
+                "user_name": {"type": "string"},
+                "email": {"type": "string"},
+                "phone_number": {"type": "string"},
+                "address": {"type": "string"},
+                "group": {"type": "string"}
+            }
+      responses:
+        204:
+            description: |
+                Succesfully updated the resource:
+  /photo:
+      put:
+        description: |
+          Update User Photo
+        headers:
+         Authorization:
+           description:
+               Authorization Token
+           type: string
+        body:
+          multipart/form-data:
+            schema:
+              file
+        responses:
+          204:
+              description: |
+                  Succesfully updated the resource:
