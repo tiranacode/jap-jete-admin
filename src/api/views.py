@@ -27,6 +27,7 @@ def hello():
         "message": "To every action, there is always opposed an equal reaction. | Sir Isaac Newton |"
     })
 
+
 @api.route('/login/', methods=['POST'])
 def login():
     data = json.loads(request.data)
@@ -75,4 +76,60 @@ def login():
         return ApiResponse({
             'status': 'Failed',
             'message': "Couldn't create new user"
+        })
+
+
+# List blood types
+@api.route('/blood-types/')
+def get_blood_types():
+    types = session.query(BloodType).all()
+    data = []
+    for x in types:
+        data.append( {"id": x._id, "type": x.type} )
+        
+    return json.dumps(data)
+    
+    
+
+@api.route('/user/', methods=['PUT'])
+@require_login
+def update_profile():
+
+    if request.data:
+        data = json.loads(request.data)
+        user_id = request.args.get('user_id')
+        gcm_id = data.get('gcm_id')
+        blood_type = data.get('blood_type')
+        username = data.get('user_name')
+        email = data.get('email')
+        phone_number = data.get('phone_number')
+        address = data.get('address')
+        
+        user = session.query(User).filter_by(user_id=user_id).first()
+        if user:
+            if gcm_id:
+                user.gcm_id = gcm_id
+            if blood_type:
+                blood = session.query(BloodType).filter_by(id=blood_type).first()
+                if blood:
+                    user.blood_type = blood
+            if username:
+                user.username = username
+            if email:
+                user.email = email
+            if phone_number:
+                user.phone_number = phone_number
+            if address:
+                user.address = address
+            
+            
+            session.commit()
+            
+            return ApiResponse({
+                'status': 'OK',
+            })
+            
+    return ApiResponse({
+            'status': 'Failed',
+            'message': "No data found"
         })
