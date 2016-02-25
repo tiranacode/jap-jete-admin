@@ -85,7 +85,7 @@ def get_blood_types():
     types = session.query(BloodType).all()
     data = []
     for x in types:
-        data.append( {"id": x._id, "type": x.type} )
+        data.append( x.type )
         
     return json.dumps(data)
     
@@ -95,33 +95,24 @@ def get_blood_types():
 @require_login
 def update_profile():
 
-    if request.data:
+    attribs =[
+        'gcm_id',
+        'username'
+        'email',
+        'phone_number',
+        'address'
+    ]
+
+    if request.data:        
         data = json.loads(request.data)
         user_id = request.args.get('user_id')
-        gcm_id = data.get('gcm_id')
-        blood_type = data.get('blood_type')
-        username = data.get('user_name')
-        email = data.get('email')
-        phone_number = data.get('phone_number')
-        address = data.get('address')
         
         user = session.query(User).filter_by(user_id=user_id).first()
         if user:
-            if gcm_id:
-                user.gcm_id = gcm_id
-            if blood_type:
-                blood = session.query(BloodType).filter_by(id=blood_type).first()
-                if blood:
-                    user.blood_type = blood
-            if username:
-                user.username = username
-            if email:
-                user.email = email
-            if phone_number:
-                user.phone_number = phone_number
-            if address:
-                user.address = address
-            
+            for attr in attribs:
+                val = request.data.get(attr)
+                if val is not None:
+                    setattr(user, attr, val)
             
             session.commit()
             
