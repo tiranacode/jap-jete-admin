@@ -26,7 +26,8 @@ class User(Base):
     session_token = Column(String(255))
     session_token_expires_at = Column(DateTime)
     gcm_id = Column(String(512))
-    blood_type = Column(SmallInteger, ForeignKey('blood_types._id'))
+    blood_type = Column(String(2))
+    blood_typeF = Column(SmallInteger, ForeignKey('blood_types._id'))
     email = Column(String(128))
     phone_number = Column(String(24))
     address = Column(String(128))
@@ -54,7 +55,7 @@ class BloodType(Base):
     __tablename__ = "blood_types"
 
     _id = Column(SmallInteger, primary_key=True)
-    type = Column(String(3), unique=True)
+    type = Column(String(2), unique=True)
 
     def __init__(self, type):
         self.type = type

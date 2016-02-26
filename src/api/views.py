@@ -100,7 +100,8 @@ def update_profile():
         'username'
         'email',
         'phone_number',
-        'address'
+        'address',
+        'blood_type'
     ]
 
     if request.data:        
@@ -113,6 +114,9 @@ def update_profile():
                 val = request.data.get(attr)
                 if val is not None:
                     setattr(user, attr, val)
+                     # trigger update
+                    if attr == 'blood_type':
+                        user.blood_typeF = session.query(BloodType).filter_by(type=val).first()
             
             session.commit()
             
