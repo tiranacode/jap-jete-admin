@@ -27,6 +27,7 @@ def hello():
         "message": "To every action, there is always opposed an equal reaction. | Sir Isaac Newton |"
     })
 
+
 @api.route('/login/', methods=['POST'])
 def login():
     data = json.loads(request.data)
@@ -75,4 +76,55 @@ def login():
         return ApiResponse({
             'status': 'Failed',
             'message': "Couldn't create new user"
+        })
+
+
+# List blood types
+@api.route('/blood-types/')
+def get_blood_types():
+    types = session.query(BloodType).all()
+    data = []
+    for x in types:
+        data.append( x.type )
+        
+    return json.dumps(data)
+    
+    
+
+@api.route('/user/', methods=['PUT'])
+@require_login
+def update_profile():
+
+    attribs =[
+        'gcm_id',
+        'username'
+        'email',
+        'phone_number',
+        'address',
+        'blood_type'
+    ]
+
+    if request.data:        
+        data = json.loads(request.data)
+        user_id = request.args.get('user_id')
+        
+        user = session.query(User).filter_by(user_id=user_id).first()
+        if user:
+            for attr in attribs:
+                val = request.data.get(attr)
+                if val is not None:
+                    setattr(user, attr, val)
+                     # trigger update
+                    if attr == 'blood_type':
+                        user.blood_typeF = session.query(BloodType).filter_by(type=val).first()
+            
+            session.commit()
+            
+            return ApiResponse({
+                'status': 'OK',
+            })
+            
+    return ApiResponse({
+            'status': 'Failed',
+            'message': "No data found"
         })
