@@ -40,9 +40,6 @@ class User(Base):
         self.blood_type = blood_type
         self.session_token, self.session_token_expires_at = User.generate_session_token()
 
-    def  __repr__(self):
-        return "<User %r %r >" % (self.id, self.username)
-
     @classmethod
     def generate_session_token(cls):
         token = ''.join([uuid.uuid4().hex for x in range(4)])

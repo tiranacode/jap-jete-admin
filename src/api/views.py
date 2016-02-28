@@ -86,10 +86,10 @@ def get_blood_types():
     data = []
     for x in types:
         data.append( x.type )
-        
+
     return json.dumps(data)
-    
-    
+
+
 
 @api.route('/user/', methods=['PUT'])
 @require_login
@@ -104,10 +104,10 @@ def update_profile():
         'blood_type'
     ]
 
-    if request.data:        
+    if request.data:
         data = json.loads(request.data)
         user_id = request.args.get('user_id')
-        
+
         user = session.query(User).filter_by(user_id=user_id).first()
         if user:
             for attr in attribs:
@@ -117,14 +117,38 @@ def update_profile():
                      # trigger update
                     if attr == 'blood_type':
                         user.blood_typeF = session.query(BloodType).filter_by(type=val).first()
-            
+
             session.commit()
-            
+
             return ApiResponse({
                 'status': 'OK',
             })
-            
+
     return ApiResponse({
             'status': 'Failed',
             'message': "No data found"
         })
+
+
+@api.route('/user/', methods=["GET"])
+@require_login
+def get_profile():
+
+    user_id = request.args.get('user_id', 0)
+
+    user = session.query(User).filter_by(user_id=user_id).first()
+
+    if user:
+        return ApiResponse({
+            'gcm_id': user.gcm_id,
+            'blood_type': user.blood_type,
+            'email': user.email,
+            'phone_number': user.phone_number,
+            'username': user.username,
+            'address': user.address        
+        })
+
+    return ApiResponse({
+        'status': 'Failed',
+        'message': 'Wrong data'
+    })
