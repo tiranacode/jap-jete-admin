@@ -128,3 +128,26 @@ def update_profile():
             'status': 'Failed',
             'message': "No data found"
         })
+
+
+@api.route('/user/', methods=["GET"])
+@require_login
+def get_profile():
+    
+    user_id = request.args.get('user_id', 0)
+    
+    user = session.query(User).filter_by(user_id=user_id).first()
+    
+    if user:
+        return ApiResponse({
+            'gcm_id': user.gcm_id,
+            'blood_type': user.blood_type,
+            'email': user.email,
+            'phone_number': user.phone_number
+        
+        })
+    
+    return ApiResponse({
+        'status': 'Failed',
+        'message': 'Wrong data'
+    })
