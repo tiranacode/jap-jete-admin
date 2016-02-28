@@ -6,7 +6,7 @@ mediaType: application/json
 /user:
     put:
       description: |
-      Update User Details
+        Update User Details
       headers:
        Authorization:
          description:
@@ -28,7 +28,26 @@ mediaType: application/json
         204:
             description: |
                 Succesfully updated the resource:
-  /photo:
+
+
+
+    get:
+      responses:
+        200:
+          body:
+            example: |
+                {
+                    "gcm_id": "",
+                    "username": "",
+                    "email": "",
+                    "phone_number": "",
+                    "address": "",
+                    "blood_type": ""
+                  }
+
+
+
+/photo:
       put:
         description: |
           Update User Photo
