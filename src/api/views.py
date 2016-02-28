@@ -137,7 +137,7 @@ def get_profile():
     user_id = request.args.get('user_id', 0)
 
     user = session.query(User).filter_by(user_id=user_id).first()
-
+        
     if user:
         return ApiResponse({
             'gcm_id': user.gcm_id,
@@ -145,9 +145,9 @@ def get_profile():
             'email': user.email,
             'phone_number': user.phone_number,
             'username': user.username,
-            'address': user.address        
+            'address': user.address                
         })
-
+    
     return ApiResponse({
         'status': 'Failed',
         'message': 'Wrong data'
