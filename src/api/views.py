@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, request
 from db import *
+from pushjack import GCMClient
 
 import os
 import json
@@ -145,10 +146,35 @@ def get_profile():
             'email': user.email,
             'phone_number': user.phone_number,
             'username': user.username,
-            'address': user.address        
+            'address': user.address
         })
 
     return ApiResponse({
         'status': 'Failed',
         'message': 'Wrong data'
     })
+
+@api.route('/gcm-message/', methods=['POST'])
+def gcm_message():
+    if request.form.get('message'):
+        # TODO: move api_key to the config file
+        # TODO: use another API key, please
+        gcmClient = GCMClient(api_key='AIzaSyDUKi7xm1lHxe_80t3suXqKlFRsOLBjA4E')
+        alert = request.form.get('message')
+        # TODO: obtain this gcm_id (it can be a list of GCM IDs) from the DB
+        gcm_id = 'dgS_vYVnLcU:APA91bHI2sXIy8uIATbPrTIwXu9oWc_rVJ8a4ejjdwhub9ZUGi6LlMgVXT6uOF3_XnMzTO1xAvoqmd5HpKg1n2g0UJ51V1Qq8OkwaiR_aUB-2e9X-s4sDyjKUt_MlakxgfKJZSzHeqD6'
+        response = gcmClient.send(gcm_id,
+                                  alert,
+                                  time_to_live=3600)
+        if response:
+            return ApiResponse({
+                'message': 'Mesazhi u dergua'
+            })
+        else:
+            return ApiResponse({
+                'message': 'Father, why have you forsaken me?'
+            })
+    else:
+        return ApiResponse({
+            'message': 'bravo kari, di te shtypesh buton'
+        })

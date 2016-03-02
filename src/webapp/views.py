@@ -26,3 +26,7 @@ def index():
 @webapp.route('/reaction')
 def reaction():
     return render_template('reaction.html')
+
+@webapp.route('/gcm-message')
+def gcm_message():
+    return render_template('gcm-message.html')

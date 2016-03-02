@@ -31,7 +31,7 @@ class User(Base):
     email = Column(String(128))
     phone_number = Column(String(24))
     address = Column(String(128))
-    
+
 
     def __init__(self, user_id, fb_token='', gcm_id='', blood_type=''):
         self.user_id = user_id
@@ -56,7 +56,7 @@ class BloodType(Base):
 
     def __init__(self, type):
         self.type = type
-        
+
 
 class Hospital(Base):
     __tablename__ = 'hospitals'
@@ -76,4 +76,3 @@ class Hospital(Base):
         self.password = password
         self.address = address
         self.contact = contact
-
