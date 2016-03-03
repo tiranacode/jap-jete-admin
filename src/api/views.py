@@ -176,5 +176,5 @@ def gcm_message():
             })
     else:
         return ApiResponse({
-            'message': 'bravo kari, di te shtypesh buton'
+            'message': 'Can\'t send a blank message...'
         })
