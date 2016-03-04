@@ -20,9 +20,10 @@ def index():
         # Will always return GET['user_id'] if provided (regardless of whether
         # a user with that ID exists or not.)
         return render_template(os.path.join('pages', 'hello.html'), name=user_id)
+        
 
+@webapp.route('/admin')
+def admin():
+    
 
-
-@webapp.route('/reaction')
-def reaction():
-    return render_template('reaction.html')
+    return render_template(os.path.join('pages', 'hello.html'))
