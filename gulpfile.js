@@ -7,13 +7,10 @@ var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
 var streamify = require('gulp-streamify');
 var notify = require('gulp-notify');
- var gutil = require('gulp-util');
- var livereload = require('gulp-livereload');
+var gutil = require('gulp-util');
+var livereload = require('gulp-livereload');
+var clean = require('gulp-clean');
 var glob = require('glob');
-// var shell = require('gulp-shell');
-// var concat = require('gulp-concat');
-// var cssmin = require('gulp-cssmin');
-// var connect = require('gulp-connect');
 
 
 // External dependencies you do not want to rebundle while developing,
@@ -70,7 +67,7 @@ var browserifyTask = function (options) {
   // in the application bundle
   if (options.development) {
 
-  	var testFiles = glob.sync('./specs/**/*-spec.js');
+  	var testFiles = glob.sync('./src/webapp/static/jsx/*.js');
 		var testBundler = browserify({
 			entries: testFiles,
 			debug: true, // Gives us sourcemapping
@@ -121,8 +118,7 @@ var browserifyTask = function (options) {
 
 
 gulp.task('default', function() {
-  // place code for your default task here
-
+  gulp.start('clean');
   livereload.listen();
 
     browserifyTask({
@@ -133,11 +129,17 @@ gulp.task('default', function() {
 
 });
 
-gulp.task("build",function () {
+gulp.task("deploy",function () {
+  gulp.start('clean');
   browserifyTask({
       development: false,
       src: src,
       dest: dest
     });
     
+});
+
+gulp.task('clean', function () {
+  return gulp.src([dest], {read: false})
+    .pipe(clean());
 });
