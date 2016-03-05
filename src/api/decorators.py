@@ -1,4 +1,4 @@
-from db import *
+import db
 from utils import ApiResponse
 import config
 import time, datetime
@@ -11,15 +11,15 @@ from flask import request
 def require_login(handler):
     @wraps(handler)
     def safe_handler(*args, **kwargs):
+        session = db.Session()
         session_token = request.args.get('session_token', '')
         user_id = request.args.get('user_id', 0)
-        user = session.query(User).filter_by(user_id=user_id).first()
-        sleep_amount = random.random()/5
+        user = session.query(db.User).filter_by(user_id=user_id).first()
         if user and utils.str_equal(user.session_token, session_token) and \
             utils.to_timestamp(user.session_token_expires_at) > time.time():
-            return handler(*args, **kwargs)
+            response = handler(*args, **kwargs)
         else:
-            time.sleep(sleep_amount)
-            return ApiResponse(config.ACCESS_DENIED_MSG, status='403')
-
+            response = ApiResponse(config.ACCESS_DENIED_MSG, status='403')
+        session.close()
+        return response
     return safe_handler

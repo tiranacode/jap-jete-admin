@@ -8,11 +8,10 @@ import datetime, time
 
 Base = declarative_base()
 #postgresql://user:password@host/database
-engine = create_engine(os.environ.get('PG_CONNSTR'))
+engine = create_engine(os.environ.get('PG_CONNSTR'), pool_recycle=60)
 
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+Session = sessionmaker(bind=engine)
 
 #create database structure
 def Init():
@@ -31,7 +30,7 @@ class User(Base):
     email = Column(String(128))
     phone_number = Column(String(24))
     address = Column(String(128))
-    
+
 
     def __init__(self, user_id, fb_token='', gcm_id='', blood_type=''):
         self.user_id = user_id
@@ -56,7 +55,7 @@ class BloodType(Base):
 
     def __init__(self, type):
         self.type = type
-        
+
 
 class Hospital(Base):
     __tablename__ = 'hospitals'
@@ -76,4 +75,3 @@ class Hospital(Base):
         self.password = password
         self.address = address
         self.contact = contact
-
