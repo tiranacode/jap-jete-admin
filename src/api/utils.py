@@ -5,7 +5,7 @@ import json
 
 def ApiResponse(data, mimetype=config.MIMETYPE, **kwargs):
     return Response(
-        json.dumps(data) if type(data) == dict else data,
+        json.dumps(data) if type(data) in [dict, list] else data,
         mimetype=mimetype,
         **kwargs
     )

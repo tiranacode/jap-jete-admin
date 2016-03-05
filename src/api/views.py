@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, abort, request
-from db import *
 from pushjack import GCMClient
+import db
 
 import os
 import json
@@ -31,6 +31,7 @@ def hello():
 
 @api.route('/login/', methods=['POST'])
 def login():
+    session = db.Session()
     data = json.loads(request.data)
     user_id = data['user_id']
     gcmID = data['gcmID']
@@ -47,55 +48,51 @@ def login():
         return ApiResponse(config.ACCESS_DENIED_MSG, status='403')
 
     # Facebook login was successful
-    user = session.query(User).filter_by(user_id=user_id).first()
+    user = session.query(db.User).filter_by(user_id=user_id).first()
     gcm_id = request.args.get('gcm_id', '')
     blood_type = request.args.get('blood_type', '')
 
     if user:
         user.fb_token = fb_token
-        token, expires_at = User.generate_session_token()
+        token, expires_at = db.User.generate_session_token()
         user.session_token = token
         user.session_token_expires_at = expires_at
         if gcm_id:
             user.gcm_id = gcm_id
         if blood_type:
             user.blood_type = blood_type
-        session.commit()
     else:
-        user = User(user_id, fb_token=fb_token, gcm_id=gcm_id,
+        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id,
                     blood_type=blood_type)
         session.add(user)
-        session.commit()
+    session.commit()
 
-    if user:
-        return ApiResponse({
-            'status': 'OK',
-            'session_token': user.session_token,
-            'expires_at': to_timestamp(user.session_token_expires_at)
-        })
-    else:
-        return ApiResponse({
-            'status': 'Failed',
-            'message': "Couldn't create new user"
-        })
+    response = ApiResponse({
+        'status': 'OK',
+        'session_token': user.session_token,
+        'expires_at': to_timestamp(user.session_token_expires_at)
+    } if user else {
+        'status': 'Failed',
+        'message': "Couldn't create new user"
+    })
+    session.close()
+    return response
 
 
 # List blood types
 @api.route('/blood-types/')
 def get_blood_types():
-    types = session.query(BloodType).all()
-    data = []
-    for x in types:
-        data.append( x.type )
-
-    return json.dumps(data)
+    session = db.Session()
+    response = ApiResponse([x.type for x in session.query(db.BloodType).all()])
+    session.close()
+    return response
 
 
 
 @api.route('/user/', methods=['PUT'])
 @require_login
 def update_profile():
-
+    session = db.Session()
     attribs =[
         'gcm_id',
         'username'
@@ -104,12 +101,12 @@ def update_profile():
         'address',
         'blood_type'
     ]
-
+    response = None
     if request.data:
         data = json.loads(request.data)
         user_id = request.args.get('user_id')
 
-        user = session.query(User).filter_by(user_id=user_id).first()
+        user = session.query(db.User).filter_by(user_id=user_id).first()
         if user:
             for attr in attribs:
                 val = request.data.get(attr)
@@ -117,42 +114,40 @@ def update_profile():
                     setattr(user, attr, val)
                      # trigger update
                     if attr == 'blood_type':
-                        user.blood_typeF = session.query(BloodType).filter_by(type=val).first()
+                        user.blood_typeF = session.query(db.BloodType).filter_by(type=val).first()
 
             session.commit()
-
-            return ApiResponse({
-                'status': 'OK',
+            response = ApiResponse({
+                'status': 'OK'
             })
 
-    return ApiResponse({
-            'status': 'Failed',
-            'message': "No data found"
-        })
+    session.close()
+    return response or ApiResponse({
+        'status': 'Failed',
+        'message': 'No data found'
+    })
 
 
 @api.route('/user/', methods=["GET"])
 @require_login
 def get_profile():
-
+    session = db.Session()
     user_id = request.args.get('user_id', 0)
-
-    user = session.query(User).filter_by(user_id=user_id).first()
-
-    if user:
-        return ApiResponse({
-            'gcm_id': user.gcm_id,
-            'blood_type': user.blood_type,
-            'email': user.email,
-            'phone_number': user.phone_number,
-            'username': user.username,
-            'address': user.address
-        })
-
-    return ApiResponse({
+    user = session.query(db.User).filter_by(user_id=user_id).first()
+    response = ApiResponse({
+        'gcm_id': user.gcm_id,
+        'blood_type': user.blood_type,
+        'email': user.email,
+        'phone_number': user.phone_number,
+        'username': user.username,
+        'address': user.address
+    } if user else {
         'status': 'Failed',
         'message': 'Wrong data'
     })
+    session.close()
+    return response
+
 
 @api.route('/gcm-message/', methods=['POST'])
 def gcm_message():
