@@ -8,11 +8,10 @@ import datetime, time
 
 Base = declarative_base()
 #postgresql://user:password@host/database
-engine = create_engine(os.environ.get('PG_CONNSTR'))
+engine = create_engine(os.environ.get('PG_CONNSTR'), pool_recycle=60)
 
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+Session = sessionmaker(bind=engine)
 
 #create database structure
 def Init():
