@@ -63,3 +63,9 @@ target/
 
 #virtualenv
 venv/
+
+#node modules
+node_modules/
+
+#react build js
+src/webapp/static/js/build/

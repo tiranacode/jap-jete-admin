@@ -16,11 +16,9 @@ def index():
     return render_template(os.path.join('pages', 'hello.html'),
                            name = user_id or 'Stranger')
 
-
-
-@webapp.route('/reaction')
-def reaction():
-    return render_template('reaction.html')
+@webapp.route('/admin')
+def admin():
+    return render_template(os.path.join('pages', 'donators.html'))
 
 @webapp.route('/gcm-message')
 def gcm_message():
