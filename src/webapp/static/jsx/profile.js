@@ -3,8 +3,10 @@ var React = require('react');
 var Profile = React.createClass({
     
     render: function () {
+        
+        
         return (
-            <div>Profile</div>
+            <div>Profile23</div>
         );
     }
 });

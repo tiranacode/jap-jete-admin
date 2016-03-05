@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Profile = require('./profile.js');
+var SearchBox = require('./searchbox.js');
 
 var App = React.createClass({
 
@@ -15,4 +16,4 @@ var App = React.createClass({
     }
 });
 
-ReactDOM.render(<App />, document.getElementById("main"));
+ ReactDOM.render(<App />, document.getElementById("main"));

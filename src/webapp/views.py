@@ -25,4 +25,4 @@ def index():
 @webapp.route('/admin')
 def admin():
 
-    return render_template(os.path.join('pages', 'hello.html'))
+    return render_template(os.path.join('pages', 'donators.html'))

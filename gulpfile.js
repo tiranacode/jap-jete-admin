@@ -53,12 +53,6 @@ var browserifyTask = function (options) {
       }));
   };
 
-  // Fire up Watchify when developing
-  if (options.development) {
-    appBundler = watchify(appBundler);
-    appBundler.on('update', rebundle);
-  }
-
   rebundle();
 
   // We create a separate bundle for our dependencies as they
@@ -68,21 +62,21 @@ var browserifyTask = function (options) {
   if (options.development) {
 
   	var testFiles = glob.sync('./src/webapp/static/jsx/*.js');
-		var testBundler = browserify({
-			entries: testFiles,
-			debug: true, // Gives us sourcemapping
-			transform: [reactify],
-			cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
-		});
+    var testBundler = browserify({
+        entries: testFiles,
+        debug: true, // Gives us sourcemapping
+        transform: [reactify],
+        cache: {}, packageCache: {}, fullPaths: true // Requirement of watchify
+    });
 
-		testBundler.external(dependencies);
+    testBundler.external(dependencies);
 
   	var rebundleTests = function () {
   		var start = Date.now();
   		console.log('Building TEST bundle');
   		testBundler.bundle()
       .on('error', gutil.log)
-	      .pipe(source('specs.js'))
+	      .pipe(source('main.js'))
 	      .pipe(gulp.dest(options.dest))
 	      .pipe(livereload())
 	      .pipe(notify(function () {
@@ -114,7 +108,6 @@ var browserifyTask = function (options) {
   }
 
 }
-
 
 
 gulp.task('default', function() {
