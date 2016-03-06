@@ -69,3 +69,5 @@ node_modules/
 
 #react build js
 src/webapp/static/js/build/
+
+package.tar.gz
