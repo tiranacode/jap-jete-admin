@@ -148,7 +148,7 @@ def get_profile():
 @api.route('/gcm-message/', methods=['POST'])
 def gcm_message():
     if request.form.get('message'):
-        gcmClient = GCMClient(api_key='AIzaSyDutdDVwmgkPeVIxITVhN0sn_Q66iQ-JIA')
+        gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
         alert = request.form.get('message')
         # TODO: obtain this gcm_id (it can be a list of GCM IDs) from the DB
         # gcm_id = 'dgS_vYVnLcU:APA91bHI2sXIy8uIATbPrTIwXu9oWc_rVJ8a4ejjdwhub9ZUGi6LlMgVXT6uOF3_XnMzTO1xAvoqmd5HpKg1n2g0UJ51V1Qq8OkwaiR_aUB-2e9X-s4sDyjKUt_MlakxgfKJZSzHeqD6'
