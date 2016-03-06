@@ -34,7 +34,7 @@ def login():
     session = db.Session()
     data = json.loads(request.data)
     user_id = data['user_id']
-    gcmID = data['gcmID']
+    gcm_id = data['gcm_id']
     fb_token = data['fb_token']
 
     payload= {
@@ -49,8 +49,6 @@ def login():
 
     # Facebook login was successful
     user = session.query(db.User).filter_by(user_id=user_id).first()
-    gcm_id = request.args.get('gcm_id', '')
-    blood_type = request.args.get('blood_type', '')
 
     if user:
         user.fb_token = fb_token
@@ -59,11 +57,9 @@ def login():
         user.session_token_expires_at = expires_at
         if gcm_id:
             user.gcm_id = gcm_id
-        if blood_type:
-            user.blood_type = blood_type
     else:
-        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id,
-                    blood_type=blood_type)
+        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id)
+                    #blood_type=blood_type)
         session.add(user)
     session.commit()
 
@@ -152,8 +148,7 @@ def get_profile():
 @api.route('/gcm-message/', methods=['POST'])
 def gcm_message():
     if request.form.get('message'):
-        # gcmClient = GCMClient(api_key='AIzaSyDUKi7xm1lHxe_80t3suXqKlFRsOLBjA4E')
-        gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
+        gcmClient = GCMClient(api_key='AIzaSyDutdDVwmgkPeVIxITVhN0sn_Q66iQ-JIA')
         alert = request.form.get('message')
         # TODO: obtain this gcm_id (it can be a list of GCM IDs) from the DB
         # gcm_id = 'dgS_vYVnLcU:APA91bHI2sXIy8uIATbPrTIwXu9oWc_rVJ8a4ejjdwhub9ZUGi6LlMgVXT6uOF3_XnMzTO1xAvoqmd5HpKg1n2g0UJ51V1Qq8OkwaiR_aUB-2e9X-s4sDyjKUt_MlakxgfKJZSzHeqD6'

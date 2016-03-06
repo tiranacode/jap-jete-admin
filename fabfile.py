@@ -59,6 +59,10 @@ def upload_ssh_keys():
         sudo('cat %s >> /home/ubuntu/.ssh/authorized_keys' % remote_loc)
 @task
 def deploy_code():
+
+    #build js files
+    local('gulp deploy')
+
     # compress local folder
     local('tar -zcvf %s %s' % (
         config['package_name'], ' '.join(config['deploy_content'])
