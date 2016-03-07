@@ -91,7 +91,6 @@ def update_profile():
     session = db.Session()
     attribs =[
         'gcm_id',
-        'username'
         'email',
         'phone_number',
         'address',
@@ -105,7 +104,7 @@ def update_profile():
         user = session.query(db.User).filter_by(user_id=user_id).first()
         if user:
             for attr in attribs:
-                val = request.data.get(attr)
+                val = data.get(attr)
                 if val is not None:
                     setattr(user, attr, val)
                      # trigger update
@@ -135,7 +134,6 @@ def get_profile():
         'blood_type': user.blood_type,
         'email': user.email,
         'phone_number': user.phone_number,
-        'username': user.username,
         'address': user.address
     } if user else {
         'status': 'Failed',
