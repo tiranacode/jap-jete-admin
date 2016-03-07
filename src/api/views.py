@@ -149,15 +149,18 @@ def get_profile():
 def gcm_message():
     if request.form.get('message'):
         gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
-        message = {
-            'subject': 'This is a test', # TODO: set a real subject
+
+        alert = {
+            'subject': 'Subject goes here', # TODO: set a better subject
             'message': request.form.get('message')
         }
-        # gcm_id = 'dgS_vYVnLcU:APA91bHI2sXIy8uIATbPrTIwXu9oWc_rVJ8a4ejjdwhub9ZUGi6LlMgVXT6uOF3_XnMzTO1xAvoqmd5HpKg1n2g0UJ51V1Qq8OkwaiR_aUB-2e9X-s4sDyjKUt_MlakxgfKJZSzHeqD6'
-        gcm_id_list = [user.gcm_id for user in db.Session().query(db.User).all()]
+
+        session = db.Session()
+        gcm_id_list = [user.gcm_id for user in session.query(db.User).all()]
+        session.close()
 
         response = gcmClient.send(gcm_id_list,
-                                  message,
+                                  alert,
                                   time_to_live=3600)
         if response:
             return ApiResponse({
