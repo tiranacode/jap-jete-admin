@@ -17,7 +17,8 @@ var clean = require('gulp-clean');
 // but include in your application deployment
 var dependencies = [
 	 'react',
-     'react/addons'
+     'react/addons',
+     'react-router'
 ];
 var bundleFile = 'bundle.js';
 var buildPath = './static/dist';
