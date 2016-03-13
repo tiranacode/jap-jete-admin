@@ -1,4 +1,5 @@
 import React from 'react'
+import { Router, Route, Link } from 'react-router'
 
 export default class Menu extends React.Component{
     
@@ -11,17 +12,17 @@ export default class Menu extends React.Component{
                 {
                     Id: 1,
                     Name: "Rezervat",
-                    Url: "#"
+                    Url: "/"
                 },
                 {
                     Id: 2,
                     Name: "Fushate",
-                    Url: "#"
+                    Url: "/"
                 },
                 {
                     Id: 3,
                     Name: "Dhurues",
-                    Url: "#"
+                    Url: "/donators"
                 }
             ]
         };
@@ -31,9 +32,7 @@ export default class Menu extends React.Component{
     render(){
         var items = this.state.menuItems.map(function(item) {
             return (
-                <a key={item.Id} href={item.Url}>
-                    {item.Name}
-                </a>
+                <Link key={item.Id} to={item.Url}>{item.Name}</Link>
             );
         });
         return(

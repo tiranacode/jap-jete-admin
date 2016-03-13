@@ -1,6 +1,5 @@
 import React from 'react';
-import Header from './header/Header'
-import SearchBox from './components/donators/SearchBox'
+import Header from './components/Header'
 
 export default class App extends React.Component {
     
@@ -9,9 +8,8 @@ export default class App extends React.Component {
             <div>
                 <Header />
                 <div className="container">
-                    <SearchBox />
+                    {this.props.children}
                 </div>
-                
             </div>
         );
     }
