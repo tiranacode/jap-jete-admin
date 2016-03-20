@@ -1,17 +1,16 @@
 import React from 'react';
 
-export default class SearchBox extends React.Component{
+export default class UsersList extends React.Component{
     
     constructor(props){
         super(props);
-        
     }
     
     render(){
         return (
             <div>
-                <input type="text" placeholder="Kerko" />
+                {this.props.data}
             </div>
-        );
+        )
     }
 }
