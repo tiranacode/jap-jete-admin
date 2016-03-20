@@ -5,7 +5,8 @@
 var API_URL = "/api/v1/";
 
 export const Endpoints = {
-    BloodTypes: API_URL + "blood-types"
+    BloodTypes: API_URL + "blood-types",
+    Users: API_URL + "users"
 };
 
 export const HttpHeaders = {

@@ -172,3 +172,24 @@ def gcm_message():
         return ApiResponse({
             'message': 'Can\'t send a blank message...'
         })
+
+@api.route('/users/', methods=['GET'])
+def get_users():
+
+    session = db.Session()
+    
+    
+    response = ApiResponse([  
+        {
+            'user_id': x.user_id,
+            'blood_type': x.blood_type, 
+            'name': 'name',
+            'surname': 'surname',
+            'email': x.email,
+            'address': x.address,
+            'phone_number': x.phone_number
+        }
+        for x in session.query(db.User).all()])
+    
+    session.close()
+    return response

@@ -11,18 +11,27 @@ export default class Donators extends React.Component{
     
     constructor(props){
         super(props);
+        this.state = {
+            data: [],
+            users: []  
+        };
+       
         
-        this.data = {};
+    }
+    
+    componentDidMount(){
         
+        self = this.users;
         //sample
-        Rest.readJSON( Endpoints.BloodTypes, {},
+        Rest.readJSON( Endpoints.Users, {},
             (res) => {
-                console.log(res)
+                this.setState({users: res});
             }, 
             (res) => {
                 console.error(res);
             });
     }
+    
     
     render(){
         return(
@@ -31,7 +40,7 @@ export default class Donators extends React.Component{
                 <div>
                     <SearchBox />
                     <BloodFilter />
-                    <UsersList data={0} />
+                    <UsersList data={this.state.users} />
                     <Profile />
                 </div>
             </div>
