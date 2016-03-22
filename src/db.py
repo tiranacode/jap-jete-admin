@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import Column, String, BigInteger, DateTime, Integer, SmallInteger, ForeignKey
 import os
 import uuid
@@ -17,6 +17,26 @@ Session = sessionmaker(bind=engine)
 def Init():
     Base.metadata.create_all(bind=engine, checkfirst=True)
 
+def seed():
+    session = Session()
+    session.query(UserHistory).delete()
+    session.query(User).delete()
+    session.query(Hospital).delete()
+    bexhet = User(1235, 'fb-token-lol', 'gcm-id-haha', '0-')
+    qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', 'password', 'ja-ja-jakujam', 'contact')
+    session.add(bexhet)
+    session.add(qsut)
+    session.commit()
+
+    first_donation = UserHistory(bexhet.user_id, qsut._id, 20)
+    first_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=10)
+    second_donation = UserHistory(bexhet.user_id, qsut._id, 50)
+    second_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=50)
+    session.add(first_donation)
+    session.add(second_donation)
+    session.commit()
+    session.close()
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -31,7 +51,6 @@ class User(Base):
     phone_number = Column(String(24))
     address = Column(String(128))
 
-
     def __init__(self, user_id, fb_token='', gcm_id='', blood_type=''):
         self.user_id = user_id
         self.fb_token = fb_token
@@ -45,6 +64,24 @@ class User(Base):
         expires_at = datetime.datetime.now() + datetime.timedelta(days=10)
         return (token, expires_at)
 
+
+class UserHistory(Base):
+    __tablename__ = "user_history"
+
+    _id = Column(BigInteger, primary_key=True)
+    user_id = Column(BigInteger, ForeignKey('users.user_id'))
+    hospital_id = Column(BigInteger, ForeignKey('hospitals._id'))
+    amount = Column(Integer) # how much blood was donated
+    donation_date = Column(DateTime) # when did the donation took place
+
+    user = relationship('User', foreign_keys=[user_id])
+    hospital = relationship('Hospital', foreign_keys=[hospital_id])
+
+    def __init__(self, user_id, hospital_id, amount):
+        self.user_id = user_id
+        self.hospital_id = hospital_id
+        self.amount = amount
+        self.donation_date = datetime.datetime.now()
 
 
 class BloodType(Base):
