@@ -173,8 +173,8 @@ def gcm_message():
             'message': 'Can\'t send a blank message...'
         })
 
-@api.route('/demo-user')
-def demo_user():
+@api.route('/demo-history')
+def demo_history():
     session = db.Session()
     users = session.query(db.User).all()
     result = []
@@ -188,6 +188,31 @@ def demo_user():
                 'hospital': d.hospital.name
             } for d in donations]
         })
+    session.close()
+    return ApiResponse({
+        'history': result
+    })
+
+
+@api.route('/demo-history/<id>')
+def demo_user_history(id):
+    session = db.Session()
+    user = session.query(db.User).filter_by(user_id=id).first()
+    if not user:
+        return ApiResponse({
+            'status': 'error',
+            'message': 'No user with id {0} found'.format(id)
+        })
+
+    donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
+    result = {
+        'user': user.user_id,
+        'history': [{
+            'date': str(d.donation_date),
+            'amount': d.amount,
+            'hospital': d.hospital.name
+        } for d in donations]
+    }
     session.close()
     return ApiResponse({
         'history': result
