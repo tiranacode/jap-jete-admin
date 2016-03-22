@@ -71,3 +71,4 @@ node_modules/
 src/webapp/static/js/build/
 
 package.tar.gz
+.idea
