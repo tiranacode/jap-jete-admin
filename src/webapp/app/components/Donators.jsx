@@ -36,11 +36,16 @@ export default class Donators extends React.Component{
     render(){
         return(
             <div className="donators">
-                <h1>Donators</h1>
-                <div>
-                    <SearchBox />
-                    <BloodFilter />
-                    <UsersList data={this.state.users} />
+                <div className="SearchContainer">
+                    <div className="SearchHeader box-shadow">
+                        <SearchBox />
+                        <BloodFilter />
+                    </div>
+                    <div className="SearchBody box-shadow">
+                        <UsersList data={this.state.users} />
+                    </div>
+                </div>
+                <div className="ProfileContainer box-shadow"> 
                     <Profile />
                 </div>
             </div>

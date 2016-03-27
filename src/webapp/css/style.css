@@ -6,6 +6,7 @@ body{
     background-color: rgb(50,50,50);
     height: 64px;
     box-shadow: 3px 6px 5px #888;
+    margin-bottom: 20px;
 }
 
 .head-container{
@@ -38,3 +39,80 @@ body{
     padding: 0;
     /*padding-top: 10px;*/
 }
+
+
+/* Donators */
+.SearchContainer{
+    width: 65%;
+    display: inline-block;
+}
+
+.ProfileContainer{
+    width: 33%;
+    display: inline-block;
+    margin-left: 2%;
+    background-color: white;
+    vertical-align: top;
+    min-height: 200px;
+}
+
+.SearchHeader{
+    background-color: #D30101;
+}
+
+#search{
+    width: 100%;
+    background-color: #D30101;
+    color: white;
+    border-color: white;
+    padding: 2px 4px;
+}
+
+.SearchBody{
+    background-color: white;
+    margin-top: 10px;
+}
+
+.SearchHeader, .SearchBody, .ProfileContainer{
+    padding: 15px;
+}
+
+.box-shadow{
+    box-shadow: 5px 5px 5px #888;
+}
+
+.bloodFilter{
+    color: white;
+    margin-top: 5px;
+}
+
+.bloodFilter-right{
+    display: inline-block;
+}
+.bloodFilter-left{
+    float: right;
+}
+
+
+.bloodGroup{
+    display: inline-block;
+    margin-right: 10px;
+    padding: 2px 8px;
+    border-right: 1px solid white;
+}
+
+.bloodGroup:last-child{
+    border-right: none;
+}
+
+.bloodType{
+    display: block;
+}
+.bloodType input{
+    margin-right: 3px;
+}
+
+.UsersTable{
+    width: 100%;
+}
+

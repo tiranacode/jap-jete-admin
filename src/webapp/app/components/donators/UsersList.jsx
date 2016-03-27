@@ -1,5 +1,5 @@
 import React from 'react';
-import {DataTable} from 'react-data-components';
+import UserRow from './UserRow';
 
 export default class UsersList extends React.Component{
     
@@ -16,17 +16,24 @@ export default class UsersList extends React.Component{
             { title: 'Grup Gjaku', prop: 'blood_type' }
         ];
         
+        //render table head
+        var head = [];
+        for(var i of columns){
+            head.push(<th key={i.prop}>{i.title}</th>);
+        }
+        
+        //render table rows
+        var body = [];
+        for(var i of this.props.data){
+            body.push(<UserRow key={i.user_id} data={i} columns={columns} />)
+        }
+        
         return (
             <div>
-                <DataTable
-                    className="usersList"
-                    keys={[ 'name', 'surname' ]}
-                    columns={columns}
-                    initialData={this.props.data}
-                    initialPageLength={5}
-                    initialSortBy={{ prop: 'name', order: 'ascending' }}
-                    pageLengthOptions={[ 5, 10, 30 ]}
-                />
+                <table className="UsersTable">
+                    <thead><tr>{head}</tr></thead>
+                    <tbody>{body}</tbody>
+                </table>
             </div>
         )
     }

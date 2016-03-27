@@ -10,7 +10,7 @@ export default class SearchBox extends React.Component{
     render(){
         return (
             <div>
-                <input type="text" placeholder="Kerko" />
+                <input id="search" type="text" placeholder="Kerko" />
             </div>
         );
     }
