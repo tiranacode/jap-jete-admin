@@ -30,6 +30,17 @@ export default class Donators extends React.Component{
             (res) => {
                 console.error(res);
             });
+        // this.setState({users: [
+        //     {
+        //         'user_id': 1,
+        //         'blood_type': 'a',
+        //         'name': 'aleksander',
+        //         'surname': 'bello',
+        //         'email': 'bello@bello',
+        //         'address': 'ca',
+        //         'phone_number': 'ca'
+        //     }
+        // ]});
     }
     
     
