@@ -13,10 +13,12 @@ export default class Donators extends React.Component{
         super(props);
         this.state = {
             data: [],
-            users: []  
+            users: [],
+            profileData: {
+                
+            }
         };
        
-        
     }
     
     componentDidMount(){
@@ -32,6 +34,11 @@ export default class Donators extends React.Component{
             });
     }
     
+    editUser(user){
+        this.setState({
+            profileData: user
+        });
+    }
     
     render(){
         return(
@@ -42,11 +49,11 @@ export default class Donators extends React.Component{
                         <BloodFilter />
                     </div>
                     <div className="SearchBody box-shadow">
-                        <UsersList data={this.state.users} />
+                        <UsersList data={this.state.users} editUser={this.editUser.bind(this)} />
                     </div>
                 </div>
                 <div className="ProfileContainer box-shadow"> 
-                    <Profile />
+                    <Profile data={this.state.profileData} />
                 </div>
             </div>
         );
