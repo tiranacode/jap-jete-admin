@@ -27,7 +27,10 @@ export default class Donators extends React.Component{
         //sample
         Rest.readJSON( Endpoints.Users, {},
             (res) => {
-                this.setState({users: res});
+                this.setState({
+                    users: res,
+                    profileData: res[0]
+                });
             }, 
             (res) => {
                 console.error(res);
