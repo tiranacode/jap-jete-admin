@@ -14,7 +14,7 @@ export default class Header extends React.Component{
                 <div className="head-container">
                     <div className="head-left">
                         <a href="#">
-                            <img src="#" />
+                            <img src="webapp/static/images/logo_64.png" />
                         </a>
                     </div>
                     <Menu />

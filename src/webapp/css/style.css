@@ -19,6 +19,15 @@ body{
     display: inline-block;
 }
 
+.head-left{
+    position: absolute;
+    top: 10px;
+}
+
+.head-left img{
+    width: 48px;
+}
+
 .main-menu{
     float: right;
 }
@@ -66,7 +75,30 @@ body{
     color: white;
     border-color: white;
     padding: 2px 4px;
+    border: 1px solid;
 }
+
+#search:focus{
+    border: 1px solid white;
+    outline: 0;
+    color: #eee;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    white;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    white;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    white;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    white;
+}
+
 
 .SearchBody{
     background-color: white;
@@ -78,7 +110,7 @@ body{
 }
 
 .box-shadow{
-    box-shadow: 5px 5px 5px #888;
+    box-shadow: 3px 3px 3px #888;
 }
 
 .bloodFilter{
@@ -121,7 +153,11 @@ body{
     vertical-align: top;
 }
 
-.ProfileDiv ul{
+.ProfileDiv img{
+    width: 150px;
+}
+
+.ProfileDiv ul, .ProfileEdit ul{
     margin: 0;
     list-style: none;
     padding-left: 10px;
@@ -140,4 +176,16 @@ body{
 .edit:hover{
     cursor: pointer;
     text-decoration: underline;
+}
+
+.ProfileEdit label span{
+    display: block;
+}
+
+.ProfileEdit{
+    text-align: center;
+}
+
+.ProfileEdit ul{
+    padding: 0;
 }
