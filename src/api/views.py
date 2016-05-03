@@ -191,7 +191,7 @@ def get_users():
     session.close()
     return response
 
-@api.route('/demo-history')
+@api.route('/donations')
 def demo_history():
     session = db.Session()
     users = session.query(db.User).all()
@@ -212,7 +212,7 @@ def demo_history():
     })
 
 
-@api.route('/demo-history/<id>')
+@api.route('/donations/<id>')
 def demo_user_history(id):
     session = db.Session()
     user = session.query(db.User).filter_by(user_id=id).first()
