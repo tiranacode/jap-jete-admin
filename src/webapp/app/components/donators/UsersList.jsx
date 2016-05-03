@@ -43,7 +43,7 @@ export default class UsersList extends React.Component{
         return (
             <div>
                 <p>{this.state.selectedVal}</p>
-                <table className="UsersTable">
+                <table className="UsersTable table">
                     <thead><tr>{head}</tr></thead>
                     <tbody>{body}</tbody>
                 </table>
