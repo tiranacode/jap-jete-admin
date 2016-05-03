@@ -173,6 +173,7 @@ def gcm_message():
             'message': 'Can\'t send a blank message...'
         })
 
+<<<<<<< HEAD
 @api.route('/demo-history')
 def demo_history():
     session = db.Session()
@@ -217,3 +218,25 @@ def demo_user_history(id):
     return ApiResponse({
         'history': result
     })
+=======
+@api.route('/users/', methods=['GET'])
+def get_users():
+
+    session = db.Session()
+    
+    
+    response = ApiResponse([  
+        {
+            'user_id': x.user_id,
+            'blood_type': x.blood_type, 
+            'name': 'name',
+            'surname': 'surname',
+            'email': x.email,
+            'address': x.address,
+            'phone_number': x.phone_number
+        }
+        for x in session.query(db.User).all()])
+    
+    session.close()
+    return response
+>>>>>>> 8251fbb8ff34805cb05c7c173c2d54836752e0d1
