@@ -66,9 +66,10 @@ venv/
 
 #node modules
 node_modules/
+src/webapp/node_modules/
 
 #react build js
-src/webapp/static/js/build/
+src/webapp/static/dist/
 
 package.tar.gz
 .idea

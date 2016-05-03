@@ -17,6 +17,9 @@ config = {
         'src',
         'requirements.txt',
     ],
+    'excludes': [
+        'src/webapp/node_modules'
+    ],
     'dependencies': [
         'python-pip',
         'ipython',
@@ -61,11 +64,12 @@ def upload_ssh_keys():
 def deploy_code():
 
     #build js files
-    local('gulp deploy')
+    local('gulp deploy --cwd src/webapp/')
 
     # compress local folder
-    local('tar -zcvf %s %s' % (
-        config['package_name'], ' '.join(config['deploy_content'])
+    local('tar -zcvf %s %s --exclude=%s' % (
+        config['package_name'], ' '.join(config['deploy_content']),
+        ' --exclude='.join(config['excludes'])
     ))
 
     # upload package and delete local folder
