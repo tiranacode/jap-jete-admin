@@ -22,6 +22,8 @@ python server.py
 
 # ReactJS preset
 ```bash
+cd src/webapp
+
 # Transform JSX for development
 gulp default
 
