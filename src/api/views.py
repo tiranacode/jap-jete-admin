@@ -29,7 +29,7 @@ def hello():
     })
 
 
-@api.route('/login/', methods=['GET']) # TODO: turn to post
+@api.route('/login/', methods=['POST'])
 def login():
     session = db.Session()
     data = json.loads(request.data)
@@ -267,4 +267,28 @@ def get_campains_by_bloodtype():
     # return data
     return ApiResponse({
         "campains": campains
+    })
+
+
+@api.route('/campains/', methods=['POST'])
+# @require_login
+def create_campain():
+    session = db.Session()
+
+    hospital_id = 1 # TODO: Ca ben o burr
+    name = request.form.get('name')
+    message = request.form.get('message')
+    start_date = datetime.datetime.now()
+    end_date = datetime.datetime.now() + datetime.timedelta(days=10)
+    campain = db.Campain(hospital_id, name, message, start_date, end_date)
+    session.add(campain)
+    type1 = db.CampainBlood(campain._id, 'A+') # TODO: don't use a hardcoded blood type
+    type1 = db.CampainBlood(campain._id, '0-') # TODO: don't use a hardcoded blood type
+    session.add(type1)
+    session.commit()
+    session.close()
+
+    # return data
+    return ApiResponse({
+        'status': 'ok'
     })

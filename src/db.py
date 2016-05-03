@@ -158,7 +158,7 @@ class CampainBlood(Base):
 
     _id = Column(BigInteger, primary_key=True)
     campain_id = Column(BigInteger, ForeignKey('campains._id'))
-    blood_type = Column(String(2))
+    blood_type = Column(String(3))
 
     campain = relationship('Campain', foreign_keys=[campain_id])
 
