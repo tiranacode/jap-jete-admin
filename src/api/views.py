@@ -175,14 +175,11 @@ def gcm_message():
 
 @api.route('/users/', methods=['GET'])
 def get_users():
-
     session = db.Session()
-    
-    
-    response = ApiResponse([  
+    response = ApiResponse([
         {
             'user_id': x.user_id,
-            'blood_type': x.blood_type, 
+            'blood_type': x.blood_type,
             'name': 'name',
             'surname': 'surname',
             'email': x.email,
@@ -190,6 +187,81 @@ def get_users():
             'phone_number': x.phone_number
         }
         for x in session.query(db.User).all()])
-    
+
     session.close()
     return response
+
+@api.route('/demo-history')
+def demo_history():
+    session = db.Session()
+    users = session.query(db.User).all()
+    result = []
+    for u in users:
+        donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
+        result.append({
+            'user': u.user_id,
+            'history': [{
+                'date': str(d.donation_date),
+                'amount': d.amount,
+                'hospital': d.hospital.name
+            } for d in donations]
+        })
+    session.close()
+    return ApiResponse({
+        'history': result
+    })
+
+
+@api.route('/demo-history/<id>')
+def demo_user_history(id):
+    session = db.Session()
+    user = session.query(db.User).filter_by(user_id=id).first()
+    if not user:
+        return ApiResponse({
+            'status': 'error',
+            'message': 'No user with id {0} found'.format(id)
+        })
+
+    donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
+    result = {
+        'user': user.user_id,
+        'history': [{
+            'date': str(d.donation_date),
+            'amount': d.amount,
+            'hospital': d.hospital.name
+        } for d in donations]
+    }
+    session.close()
+    return ApiResponse({
+        'history': result
+    })
+
+@api.route('/campains/', methods=['GET'])
+# @require_login
+def get_campains_by_bloodtype():
+    session = db.Session()
+    user_id = request.args.get('user_id', 0)
+
+    # filter by user Blood Type
+    user = session.query(db.User).filter_by(user_id=user_id).first()
+    if not user:
+        return ApiResponse({
+            'status': 'error',
+            'message': 'No user with id {0} found'.format(user_id)
+        })
+
+    campains_blood = session.query(db.CampainBlood).filter_by(blood_type=user.blood_type).all()
+    campains = [
+        {
+            'name': c.campain.name,
+            'hospital': c.campain.hospital.name,
+            'message': c.campain.message,
+            'start_date': str(c.campain.start_date),
+            'end_date': str(c.campain.end_date)
+        } for c in campains_blood]
+    session.close()
+
+    # return data
+    return ApiResponse({
+        "campains": campains
+    })
