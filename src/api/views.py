@@ -29,7 +29,7 @@ def hello():
     })
 
 
-@api.route('/login/', methods=['POST'])
+@api.route('/login/', methods=['GET']) # TODO: turn to post
 def login():
     session = db.Session()
     data = json.loads(request.data)
@@ -37,9 +37,9 @@ def login():
     gcm_id = data['gcm_id']
     fb_token = data['fb_token']
 
-    payload= {
+    payload = {
         'access_token': fb_token,
-        'fields': 'id'
+        'fields': ['id', 'name']
     }
     fb_response = requests.get(config.FB_ENDPOINT, params=payload).json()
     if 'error' in fb_response:
@@ -58,7 +58,8 @@ def login():
         if gcm_id:
             user.gcm_id = gcm_id
     else:
-        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id)
+        name = fb_response['name'].split()
+        user = db.User(user_id, name[0], name[-1], fb_token=fb_token, gcm_id=gcm_id)
                     #blood_type=blood_type)
         session.add(user)
     session.commit()
@@ -184,7 +185,9 @@ def get_users():
             'surname': 'surname',
             'email': x.email,
             'address': x.address,
-            'phone_number': x.phone_number
+            'phone_number': x.phone_number,
+            'first_name': x.first_name,
+            'last_name': x.last_name
         }
         for x in session.query(db.User).all()])
 
