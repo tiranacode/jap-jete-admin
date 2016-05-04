@@ -27,7 +27,7 @@ def seed():
     session.query(Hospital).delete()
 
     #user history
-    bexhet = User(1235, 'fb-token-lol', 'gcm-id-haha', 'A+')
+    bexhet = User(1235, 'Behgjet', 'Pacolli', 'fb-token-lol', 'gcm-id-haha', 'A+')
     qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', 'password', 'ja-ja-jakujam', 'contact')
     session.add(bexhet)
     session.add(qsut)
@@ -59,6 +59,8 @@ class User(Base):
     __tablename__ = 'users'
 
     user_id = Column(BigInteger, primary_key=True)
+    first_name = Column(String(30))
+    last_name = Column(String(30))
     fb_token = Column(String(255))
     session_token = Column(String(255))
     session_token_expires_at = Column(DateTime)
@@ -69,9 +71,10 @@ class User(Base):
     phone_number = Column(String(24))
     address = Column(String(128))
 
-
-    def __init__(self, user_id, fb_token='', gcm_id='', blood_type=''):
+    def __init__(self, user_id, first_name, last_name, fb_token='', gcm_id='', blood_type=''):
         self.user_id = user_id
+        self.first_name = first_name
+        self.last_name = last_name
         self.fb_token = fb_token
         self.gcm_id = gcm_id
         self.blood_type = blood_type
@@ -155,7 +158,7 @@ class CampainBlood(Base):
 
     _id = Column(BigInteger, primary_key=True)
     campain_id = Column(BigInteger, ForeignKey('campains._id'))
-    blood_type = Column(String(2))
+    blood_type = Column(String(3))
 
     campain = relationship('Campain', foreign_keys=[campain_id])
 

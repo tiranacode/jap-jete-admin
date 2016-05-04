@@ -37,9 +37,9 @@ def login():
     gcm_id = data['gcm_id']
     fb_token = data['fb_token']
 
-    payload= {
+    payload = {
         'access_token': fb_token,
-        'fields': 'id'
+        'fields': ['id', 'name']
     }
     fb_response = requests.get(config.FB_ENDPOINT, params=payload).json()
     if 'error' in fb_response:
@@ -58,7 +58,8 @@ def login():
         if gcm_id:
             user.gcm_id = gcm_id
     else:
-        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id)
+        name = fb_response['name'].split()
+        user = db.User(user_id, name[0], name[-1], fb_token=fb_token, gcm_id=gcm_id)
                     #blood_type=blood_type)
         session.add(user)
     session.commit()
@@ -184,14 +185,16 @@ def get_users():
             'surname': 'surname',
             'email': x.email,
             'address': x.address,
-            'phone_number': x.phone_number
+            'phone_number': x.phone_number,
+            'first_name': x.first_name,
+            'last_name': x.last_name
         }
         for x in session.query(db.User).all()])
 
     session.close()
     return response
 
-@api.route('/demo-history')
+@api.route('/donations')
 def demo_history():
     session = db.Session()
     users = session.query(db.User).all()
@@ -212,7 +215,7 @@ def demo_history():
     })
 
 
-@api.route('/demo-history/<id>')
+@api.route('/donations/<id>')
 def demo_user_history(id):
     session = db.Session()
     user = session.query(db.User).filter_by(user_id=id).first()
@@ -264,4 +267,28 @@ def get_campains_by_bloodtype():
     # return data
     return ApiResponse({
         "campains": campains
+    })
+
+
+@api.route('/campains/', methods=['POST'])
+# @require_login
+def create_campain():
+    session = db.Session()
+
+    hospital_id = 1 # TODO: Ca ben o burr
+    name = request.form.get('name')
+    message = request.form.get('message')
+    start_date = datetime.datetime.now()
+    end_date = datetime.datetime.now() + datetime.timedelta(days=10)
+    campain = db.Campain(hospital_id, name, message, start_date, end_date)
+    session.add(campain)
+    type1 = db.CampainBlood(campain._id, 'A+') # TODO: don't use a hardcoded blood type
+    type1 = db.CampainBlood(campain._id, '0-') # TODO: don't use a hardcoded blood type
+    session.add(type1)
+    session.commit()
+    session.close()
+
+    # return data
+    return ApiResponse({
+        'status': 'ok'
     })
