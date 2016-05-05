@@ -6,12 +6,12 @@ export default class Campaigns extends React.Component{
     render(){
         return (
             <div className="campaigns row">
-                <div className="col-md-6">
+                <div className="col-md-5">
                     <div className="box-shadow component">
-                        asdasd
+                        Qendra Spitalore Universitare Tirane
                     </div>
                 </div>
-                <div className="col-md-6 campaigns-right">
+                <div className="col-md-7 campaigns-right">
                     <div className="box-shadow">
                         <BloodFilter />
                     </div>

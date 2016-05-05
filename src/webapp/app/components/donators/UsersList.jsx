@@ -22,8 +22,8 @@ export default class UsersList extends React.Component{
         
         var columns = [
             { title: 'ID', prop: 'user_id'  },
-            { title: 'Emri', prop: 'name'  },
-            { title: 'Mbiemri', prop: 'surname' },
+            { title: 'Emri', prop: 'first_name'  },
+            { title: 'Mbiemri', prop: 'last_name' },
             { title: 'Grup Gjaku', prop: 'blood_type' }
         ];
         

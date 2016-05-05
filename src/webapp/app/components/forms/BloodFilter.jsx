@@ -27,7 +27,7 @@ export default class BloodFilter extends React.Component{
                     {filters}
                 </div>
                 <div className="bloodFilter-right">
-                    <BloodType blood="Te Gjitha" />
+                    <BloodType blood="Te gjithe" />
                 </div>
             </div>
         );

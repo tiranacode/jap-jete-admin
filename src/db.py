@@ -7,53 +7,6 @@ import uuid
 import datetime, time
 
 Base = declarative_base()
-#postgresql://user:password@host/database
-engine = create_engine(os.environ.get('PG_CONNSTR'), pool_recycle=60)
-
-Base.metadata.bind = engine
-Session = sessionmaker(bind=engine)
-
-#create database structure
-def Init():
-    Base.metadata.create_all(bind=engine, checkfirst=True)
-
-def seed():
-    session = Session()
-
-    session.query(CampainBlood).delete()
-    session.query(Campain).delete()
-    session.query(UserHistory).delete()
-    session.query(User).delete()
-    session.query(Hospital).delete()
-
-    #user history
-    bexhet = User(1235, 'Behgjet', 'Pacolli', 'fb-token-lol', 'gcm-id-haha', 'A+')
-    qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', 'password', 'ja-ja-jakujam', 'contact')
-    session.add(bexhet)
-    session.add(qsut)
-    session.commit()
-
-    first_donation = UserHistory(bexhet.user_id, qsut._id, 20)
-    first_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=10)
-    second_donation = UserHistory(bexhet.user_id, qsut._id, 50)
-    second_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=50)
-    session.add(first_donation)
-    session.add(second_donation)
-    session.commit()
-
-    # campains
-    campain = Campain(qsut._id,
-                        'NameOfCampain',
-                        'This is a Campain message',
-                        datetime.datetime.now(),
-                        datetime.datetime.now() + datetime.timedelta(days=50))
-    session.add(campain)
-    session.commit()
-    campain_blood = CampainBlood(campain._id, 'A+')
-    session.add(campain_blood)
-    session.commit()
-    session.close()
-
 
 class User(Base):
     __tablename__ = 'users'
@@ -165,3 +118,45 @@ class CampainBlood(Base):
     def __init__(self, campain_id, blood_type):
         self.campain_id = campain_id
         self.blood_type = blood_type
+
+def seed():
+    session = Session()
+
+    session.query(CampainBlood).delete()
+    session.query(Campain).delete()
+    session.query(UserHistory).delete()
+    session.query(User).delete()
+    session.query(Hospital).delete()
+
+    #user history
+    bexhet = User(1235, 'Behgjet', 'Pacolli', 'fb-token-lol', 'gcm-id-haha', 'A+')
+    qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', 'password', 'ja-ja-jakujam', 'contact')
+    session.add(bexhet)
+    session.add(qsut)
+    session.commit()
+
+    first_donation = UserHistory(bexhet.user_id, qsut._id, 20)
+    first_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=10)
+    second_donation = UserHistory(bexhet.user_id, qsut._id, 50)
+    second_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=50)
+    session.add(first_donation)
+    session.add(second_donation)
+    session.commit()
+
+    # campains
+    campain = Campain(qsut._id,
+                        'NameOfCampain',
+                        'This is a Campain message',
+                        datetime.datetime.now(),
+                        datetime.datetime.now() + datetime.timedelta(days=50))
+    session.add(campain)
+    session.commit()
+    campain_blood = CampainBlood(campain._id, 'A+')
+    session.add(campain_blood)
+    session.commit()
+    session.close()
+
+
+#postgresql://user:password@host/database
+engine = create_engine(os.environ.get('PG_CONNSTR'), pool_recycle=60)
+Session = sessionmaker(bind=engine)

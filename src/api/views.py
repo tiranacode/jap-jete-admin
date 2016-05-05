@@ -181,8 +181,6 @@ def get_users():
         {
             'user_id': x.user_id,
             'blood_type': x.blood_type,
-            'name': 'name',
-            'surname': 'surname',
             'email': x.email,
             'address': x.address,
             'phone_number': x.phone_number,

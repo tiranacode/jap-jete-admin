@@ -35,7 +35,7 @@ export default class Profile extends React.Component{
                 <div className="ProfileDiv">
                     <ul>
                         <li>
-                            <span>{this.props.data.name}</span> {this.props.data.surname}
+                            <span>{this.props.data.first_name}</span> {this.props.data.last_name}
                         </li>
                         <li>
                             <span>ID:</span> {this.props.data.user_id}
