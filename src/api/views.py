@@ -272,23 +272,25 @@ def get_campains_by_bloodtype():
 # @require_login
 def create_campain():
     session = db.Session()
-
     data = json.loads(request.data)
-    
+
     hospital = session.query(db.Hospital).first()
     name = data['name']
     message = data['message']
+    bloodtypes = data['bloodtypes']
     start_date = datetime.datetime.now()
     end_date = datetime.datetime.now() + datetime.timedelta(days=10)
     campain = db.Campain(hospital._id, name, message, start_date, end_date)
     session.add(campain)
-    type1 = db.CampainBlood(campain._id, 'A+') # TODO: don't use a hardcoded blood type
-    type1 = db.CampainBlood(campain._id, '0-') # TODO: don't use a hardcoded blood type
-    session.add(type1)
+    session.commit()
+
+    for bloodtype in bloodtypes:
+        campain_blood = db.CampainBlood(campain._id, bloodtype)
+        session.add(campain_blood)
+
     session.commit()
     session.close()
 
-    # return data
     return ApiResponse({
         'status': 'ok'
     })
