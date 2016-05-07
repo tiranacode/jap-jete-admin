@@ -146,12 +146,12 @@ def get_profile():
 
 @api.route('/gcm-message/', methods=['POST'])
 def gcm_message():
-    if request.form.get('message'):
+    if request.data.get('message'):
         gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
 
         alert = {
             'subject': 'Subject goes here', # TODO: set a better subject
-            'message': request.form.get('message')
+            'message': request.data.get('message')
         }
 
         session = db.Session()
@@ -273,12 +273,12 @@ def get_campains_by_bloodtype():
 def create_campain():
     session = db.Session()
 
-    hospital_id = 1 # TODO: Ca ben o burr
-    name = request.form.get('name')
-    message = request.form.get('message')
+    hospital = session.query(db.Hospital).first()
+    name = request.data.get('name')
+    message = request.data.get('message')
     start_date = datetime.datetime.now()
     end_date = datetime.datetime.now() + datetime.timedelta(days=10)
-    campain = db.Campain(hospital_id, name, message, start_date, end_date)
+    campain = db.Campain(hospital._id, name, message, start_date, end_date)
     session.add(campain)
     type1 = db.CampainBlood(campain._id, 'A+') # TODO: don't use a hardcoded blood type
     type1 = db.CampainBlood(campain._id, '0-') # TODO: don't use a hardcoded blood type
