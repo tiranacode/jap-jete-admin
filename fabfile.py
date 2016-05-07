@@ -27,7 +27,9 @@ config = {
         'python-dev',
         'postgresql',
         'python-psycopg2',
-        'libpq-dev'
+        'libpq-dev',
+        'libssl-dev',
+        'libffi-dev'
     ],
     'region': 'eu-central-1',
     'instance_name': 'tiranacode'
