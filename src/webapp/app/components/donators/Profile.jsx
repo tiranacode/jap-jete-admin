@@ -49,7 +49,7 @@ export default class Profile extends React.Component{
         );
         
         if(this.state.edit == true) display = (
-            <div className="ProfileEdit">
+            <div className="ProfileEdit form-data">
                 <ul>
                     <li>
                         <label>
@@ -76,7 +76,7 @@ export default class Profile extends React.Component{
         return (
             <div>
                 {display}
-                <button onClick={this.onClick.bind(this)}>{this.state.buttonText}</button>
+                <button className="btn" onClick={this.onClick.bind(this)}>{this.state.buttonText}</button>
             </div>
         )
     }

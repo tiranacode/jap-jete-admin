@@ -17,7 +17,7 @@ export default class Menu extends React.Component{
                 {
                     Id: 2,
                     Name: "Fushate",
-                    Url: "/"
+                    Url: "/campaigns"
                 },
                 {
                     Id: 3,
@@ -32,11 +32,11 @@ export default class Menu extends React.Component{
     render(){
         var items = this.state.menuItems.map(function(item) {
             return (
-                <Link key={item.Id} to={item.Url}>{item.Name}</Link>
+                <Link className="blog-nav-item" key={item.Id} to={item.Url}>{item.Name}</Link>
             );
         });
         return(
-            <nav className="head-right main-menu">
+            <nav className="head-right main-menu blog-nav">
                 {items}
             </nav>
         );

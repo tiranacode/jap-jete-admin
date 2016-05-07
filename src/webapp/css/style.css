@@ -10,22 +10,17 @@ body{
 }
 
 .head-container{
-    width: 1024px;
+    max-width: 1170px;
     margin: auto;
-    padding-top: 32px;
-}
-
-.head-left, .head-right{
-    display: inline-block;
-}
-
-.head-left{
-    position: absolute;
-    top: 10px;
+    padding-right: 15px;
 }
 
 .head-left img{
     width: 48px;
+}
+
+.head-left{
+    height: 41px;
 }
 
 .main-menu{
@@ -41,26 +36,8 @@ body{
 }
 
 /***********************************************/
-.container{
-    width: 1024px;
-    margin: auto;
-    margin: 10px auto;
-    padding: 0;
-    /*padding-top: 10px;*/
-}
-
-
-/* Donators */
-.SearchContainer{
-    width: 65%;
-    display: inline-block;
-}
 
 .ProfileContainer{
-    width: 33%;
-    display: inline-block;
-    margin-left: 2%;
-    background-color: white;
     vertical-align: top;
     min-height: 200px;
 }
@@ -101,7 +78,6 @@ body{
 
 
 .SearchBody{
-    background-color: white;
     margin-top: 10px;
 }
 
@@ -116,12 +92,15 @@ body{
 .bloodFilter{
     color: white;
     margin-top: 5px;
+    background-color: #D30101;
+    padding: 5px;
+}
+
+.bloodFilter-left{
+    display: inline-block;
 }
 
 .bloodFilter-right{
-    display: inline-block;
-}
-.bloodFilter-left{
     float: right;
 }
 
@@ -140,8 +119,21 @@ body{
 .bloodType{
     display: block;
 }
-.bloodType input{
-    margin-right: 3px;
+
+.bloodType input{    
+    margin-right: 9px;
+    width: 20px;
+    outline: 0;
+    box-shadow: none;
+}
+
+.bloodType input:focus{
+    outline: 0;
+    box-shadow: none;
+}
+
+.bloodFilter-right input{
+    width: 100%;
 }
 
 .UsersTable{
@@ -188,4 +180,20 @@ body{
 
 .ProfileEdit ul{
     padding: 0;
+}
+
+.campaigns-left{
+}
+
+.campaigns-right{
+}
+
+.component{
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.navbar-brand{
+    padding: 11px 15px;
 }

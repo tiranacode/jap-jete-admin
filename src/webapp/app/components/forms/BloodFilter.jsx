@@ -22,11 +22,11 @@ export default class BloodFilter extends React.Component{
         }
         
         return (
-            <div className="bloodFilter">
-                <div className="bloodFilter-right">
+            <div className="bloodFilter form-group">
+                <div className="bloodFilter-left">
                     {filters}
                 </div>
-                <div className="bloodFilter-left">
+                <div className="bloodFilter-right">
                     <BloodType blood="Te Gjitha" />
                 </div>
             </div>
@@ -40,7 +40,8 @@ class BloodType extends React.Component{
         return(
             <span key={this.props.blood} className="bloodType">
                 <label>
-                    <input type="checkbox" name="bloodFilter" value={this.props.blood} />
+                    <input type="checkbox" name="bloodFilter" className="form-control"
+                     value={this.props.blood} />
                     {this.props.blood}
                 </label>
             </span>
