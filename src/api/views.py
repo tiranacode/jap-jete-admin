@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, request
 from pushjack import GCMClient
+import bcrypt
 import db
 
 import os
@@ -8,7 +9,7 @@ import requests
 import config
 import time, datetime
 from utils import ApiResponse, to_timestamp
-from decorators import require_login
+from decorators import require_login, hospital_login
 
 
 BASE_PATH = os.path.join("/api", "v1")
@@ -310,3 +311,50 @@ def list_hospitals():
             'contact': h.contact
         } for h in hospitals]
     })
+
+@api.route('/whoami-hospital/', methods=['GET'])
+@hospital_login
+def things():
+    session = db.Session()
+    hospital_id = request.args.get('hospital_id', 0)
+    h = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+    if h:
+        return ApiResponse({
+            'data': {
+                'id': h._id,
+                'name': h.name,
+                'email': h.email,
+                'address': h.address,
+                'contact': h.contact
+            }
+        })
+    else:
+        return ApiResponse({
+            'data': 'none'
+        })
+
+
+@api.route('/hospital-login/', methods=['POST'])
+def login_hospital():
+    data = json.loads(request.data)
+
+    username = data['username']
+    password = data['password'].encode('ascii', 'replace')
+
+    session = db.Session()
+    h = session.query(db.Hospital).filter_by(username=username).first()
+    pwd = h.password.encode('ascii', 'replace')
+
+    if not h or bcrypt.hashpw(password, pwd) != pwd:
+        session.close()
+        return ApiResponse(config.ACCESS_DENIED_MSG, status='403')
+
+    h.login()
+    session.add(h)
+    session.commit()
+    response = ApiResponse({
+        'id': h._id,
+        'session_token': h.session_token
+    })
+    session.close()
+    return response

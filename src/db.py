@@ -6,6 +6,8 @@ import os
 import uuid
 import datetime, time
 
+import bcrypt
+
 Base = declarative_base()
 #postgresql://user:password@host/database
 engine = create_engine(os.environ.get('PG_CONNSTR'), pool_recycle=60)
@@ -28,7 +30,9 @@ def seed():
 
     #user history
     bexhet = User(1235, 'Behgjet', 'Pacolli', 'fb-token-lol', 'gcm-id-haha', 'A+')
-    qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', 'password', 'ja-ja-jakujam', 'contact')
+    password = bcrypt.hashpw("password", bcrypt.gensalt())
+    qsut = Hospital('QSUT', 'qsut@email.com', 'qsut', password, 'ja-ja-jakujam', 'contact')
+    qsut.login()
     session.add(bexhet)
     session.add(qsut)
     session.commit()
@@ -125,6 +129,7 @@ class Hospital(Base):
     password = Column(String(255))
     address = Column(String(255))
     contact = Column(String(255))
+    session_token = Column(String(255))
 
     def __init__(self, name, email, username, password, address, contact):
         self.name = name
@@ -133,6 +138,12 @@ class Hospital(Base):
         self.password = password
         self.address = address
         self.contact = contact
+
+    def login(self):
+        self.session_token = ''.join([uuid.uuid4().hex for x in range(4)])
+
+    def logout(self):
+        self.session_token = ''
 
 class Campain(Base):
     __tablename__ = 'campains'
