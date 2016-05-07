@@ -4,6 +4,7 @@ import config
 import time, datetime
 import utils
 import random
+import json
 
 from functools import wraps
 from flask import request
@@ -28,11 +29,13 @@ def hospital_login(handler):
     @wraps(handler)
     def safe_handler(*args, **kwargs):
         session = db.Session()
-        session_token = request.data.get('session_token', '')
-        hospital_id = request.data.get('hospital_id', 0)
-
+        data = json.loads(request.data)
+        session_token = data['session_token']
+        hospital_id = data['hospital_id']
+        print hospital_id
         hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
-        if hospital and utils.str_equal(hospital.session_token, session_token):
+        if hospital and hospital.session_token and \
+            utils.str_equal(hospital.session_token, session_token):
             response = handler(*args, **kwargs)
         else:
             response = ApiResponse(config.ACCESS_DENIED_MSG, status='403')

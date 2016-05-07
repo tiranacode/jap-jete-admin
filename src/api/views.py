@@ -275,7 +275,7 @@ def create_campain():
     session = db.Session()
     data = json.loads(request.data)
 
-    hospital = session.query(db.Hospital).first()
+    hospital = session.query(db.Hospital).first() # TODO: Dont use 1st
     name = data['name']
     message = data['message']
     bloodtypes = data['bloodtypes']
@@ -312,28 +312,6 @@ def list_hospitals():
         } for h in hospitals]
     })
 
-@api.route('/whoami-hospital/', methods=['GET'])
-@hospital_login
-def things():
-    session = db.Session()
-    hospital_id = request.args.get('hospital_id', 0)
-    h = session.query(db.Hospital).filter_by(_id=hospital_id).first()
-    if h:
-        return ApiResponse({
-            'data': {
-                'id': h._id,
-                'name': h.name,
-                'email': h.email,
-                'address': h.address,
-                'contact': h.contact
-            }
-        })
-    else:
-        return ApiResponse({
-            'data': 'none'
-        })
-
-
 @api.route('/hospital-login/', methods=['POST'])
 def login_hospital():
     data = json.loads(request.data)
@@ -358,3 +336,40 @@ def login_hospital():
     })
     session.close()
     return response
+
+@api.route('/hospital-logout/', methods=['POST'])
+@hospital_login
+def logout():
+    data = json.loads(request.data)
+    session = db.Session()
+    hospital_id = data['hospital_id']
+    # TODO: shiko per injection
+    hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+    hospital.logout()
+    session.add(hospital)
+    session.commit()
+    session.close()
+    return ApiResponse({
+        'status': 'ok'
+    })
+
+# @api.route('/whoami-hospital/', methods=['GET'])
+# @hospital_login
+# def things():
+#     session = db.Session()
+#     hospital_id = request.args.get('hospital_id', 0)
+#     h = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+#     if h:
+#         return ApiResponse({
+#             'data': {
+#                 'id': h._id,
+#                 'name': h.name,
+#                 'email': h.email,
+#                 'address': h.address,
+#                 'contact': h.contact
+#             }
+#         })
+#     else:
+#         return ApiResponse({
+#             'data': 'none'
+#         })
