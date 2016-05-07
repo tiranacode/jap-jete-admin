@@ -294,3 +294,19 @@ def create_campain():
     return ApiResponse({
         'status': 'ok'
     })
+
+@api.route('/hospitals/', methods=['GET'])
+# @require_login
+def list_hospitals():
+    session = db.Session()
+    hospitals = session.query(db.Hospital).all()
+    session.close()
+    return ApiResponse({
+        'hospitals': [{
+            'id': h._id,
+            'name': h.name,
+            'email': h.email,
+            'address': h.address,
+            'contact': h.contact
+        } for h in hospitals]
+    })
