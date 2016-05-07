@@ -23,3 +23,19 @@ def require_login(handler):
         session.close()
         return response
     return safe_handler
+
+def hospital_login(handler):
+    @wraps(handler)
+    def safe_handler(*args, **kwargs):
+        session = db.Session()
+        session_token = request.data.get('session_token', '')
+        hospital_id = request.data.get('hospital_id', 0)
+
+        hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+        if hospital and utils.str_equal(hospital.session_token, session_token):
+            response = handler(*args, **kwargs)
+        else:
+            response = ApiResponse(config.ACCESS_DENIED_MSG, status='403')
+        session.close()
+        return response
+    return safe_handler
