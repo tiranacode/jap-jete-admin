@@ -19,6 +19,10 @@ def Init():
 
 def seed():
     session = Session()
+    
+    qsut = session.query(Hospital).first()
+    if qsut is not None and qsut.name is 'QSUT':
+        return 0
 
     session.query(CampainBlood).delete()
     session.query(Campain).delete()
