@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import Column, String, BigInteger, DateTime, Integer, SmallInteger, ForeignKey, Text
+from sqlalchemy import Column, String, BigInteger, DateTime, Integer, \
+                        SmallInteger, ForeignKey, Text, Float
 import os
 import uuid
 import datetime, time
@@ -21,7 +22,7 @@ def Init():
 
 def seed():
     session = Session()
-    
+
     qsut = session.query(Hospital).first()
     if qsut is not None and qsut.name is 'QSUT':
         return 0
@@ -134,14 +135,18 @@ class Hospital(Base):
     address = Column(String(255))
     contact = Column(String(255))
     session_token = Column(String(255))
+    latitude = Column(Float)
+    longitude = Column(Float)
 
-    def __init__(self, name, email, username, password, address, contact):
+    def __init__(self, name, email, username, password, address, contact, latitude=0.0, longitude=0.0):
         self.name = name
         self.email = email
         self.username = username
         self.password = password
         self.address = address
         self.contact = contact
+        self.latitude = latitude
+        self.longitude = longitude
 
     def login(self):
         self.session_token = ''.join([uuid.uuid4().hex for x in range(4)])

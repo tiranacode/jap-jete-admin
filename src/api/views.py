@@ -308,7 +308,9 @@ def list_hospitals():
             'name': h.name,
             'email': h.email,
             'address': h.address,
-            'contact': h.contact
+            'contact': h.contact,
+            'latitude': h.latitude,
+            'longitude': h.longitude
         } for h in hospitals]
     })
 
