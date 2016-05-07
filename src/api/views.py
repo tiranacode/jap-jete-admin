@@ -273,9 +273,11 @@ def get_campains_by_bloodtype():
 def create_campain():
     session = db.Session()
 
+    data = json.loads(request.data)
+    
     hospital = session.query(db.Hospital).first()
-    name = request.data.get('name')
-    message = request.data.get('message')
+    name = data['name']
+    message = data['message']
     start_date = datetime.datetime.now()
     end_date = datetime.datetime.now() + datetime.timedelta(days=10)
     campain = db.Campain(hospital._id, name, message, start_date, end_date)

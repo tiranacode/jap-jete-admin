@@ -5,7 +5,7 @@ export default class UserRow extends React.Component{
     
      constructor(props){
         super(props);
-        
+        this.click = this.click.bind(this);
     }
     
     click(){
@@ -25,7 +25,7 @@ export default class UserRow extends React.Component{
         return(
             <tr>
                 {td}
-                <td key="edit" className="edit" onClick={this.click.bind(this)}>Edit</td>
+                <td key="edit" className="edit" onClick={this.click}>Edit</td>
             </tr>
         );
     }

@@ -11,6 +11,7 @@ export default class Donators extends React.Component{
     
     constructor(props){
         super(props);
+        this.editUser = this.editUser.bind(this);
         this.state = {
             data: [],
             users: [],
@@ -35,17 +36,6 @@ export default class Donators extends React.Component{
             (res) => {
                 console.error(res);
             });
-        // this.setState({users: [
-        //     {
-        //         'user_id': 1,
-        //         'blood_type': 'a',
-        //         'name': 'aleksander',
-        //         'surname': 'bello',
-        //         'email': 'bello@bello',
-        //         'address': 'ca',
-        //         'phone_number': 'ca'
-        //     }
-        // ]});
     }
     
     editUser(user){
@@ -63,7 +53,10 @@ export default class Donators extends React.Component{
                         <BloodFilter />
                     </div>
                     <div className="SearchBody component box-shadow">
-                        <UsersList data={this.state.users} editUser={this.editUser.bind(this)} />
+                        <UsersList 
+                            data={this.state.users} 
+                            editUser={this.editUser} 
+                        />
                     </div>
                 </div>
                 <div className="col-md-4 ">

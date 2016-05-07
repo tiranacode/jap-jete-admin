@@ -6,6 +6,8 @@ export default class UsersList extends React.Component{
     constructor(props){
         super(props);
         
+        this.onUpdate = this.onUpdate.bind(this);
+        
         this.state = {
             selectedUser: 0
         };
@@ -16,7 +18,6 @@ export default class UsersList extends React.Component{
         this.props.editUser(selectedVal);
         console.log(selectedVal);
     }
-    
     
     render(){
         
@@ -36,7 +37,7 @@ export default class UsersList extends React.Component{
         //render table rows
         var body = [];
         for(var i of this.props.data){
-            body.push(<UserRow onUpdate={this.onUpdate.bind(this)} 
+            body.push(<UserRow onUpdate={this.onUpdate} 
                         key={i.user_id} data={i} columns={columns} />);
         }
         

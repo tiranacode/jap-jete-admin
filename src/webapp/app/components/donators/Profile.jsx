@@ -6,6 +6,7 @@ export default class Profile extends React.Component{
     
     constructor(props){
         super(props);
+        this.onClick = this.onClick.bind(this);
         this.state = {
             edit: false,
             buttonText: "Ndrysho"
@@ -54,19 +55,19 @@ export default class Profile extends React.Component{
                     <li>
                         <label>
                             <span>Emri</span>
-                            <input name="name" value={this.props.data.name} type="text" />
+                            <input name="name" className="form-control" value={this.props.data.first_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Mbiemri</span>
-                            <input name="surname" value={this.props.data.surname} type="text" />
+                            <input name="surname" className="form-control" value={this.props.data.last_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Grup Gjaku</span>
-                            <input name="bloodtype" value={this.props.data.blood_type} type="text" />
+                            <input name="bloodtype" className="form-control" value={this.props.data.blood_type} type="text" />
                         </label>
                     </li>
                 </ul>
@@ -76,7 +77,11 @@ export default class Profile extends React.Component{
         return (
             <div>
                 {display}
-                <button className="btn" onClick={this.onClick.bind(this)}>{this.state.buttonText}</button>
+                <button 
+                    className="btn" 
+                    onClick={this.onClick}
+                >{this.state.buttonText}
+                </button>
             </div>
         )
     }

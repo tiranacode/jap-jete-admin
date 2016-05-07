@@ -36,6 +36,24 @@ export default class Rest {
 
 
     /**
+     * CREATE (Post Request, Get response as JSON)
+     * @param url
+     * @param body
+     * @param success
+     * @param error
+     * @constructor
+     */
+    static createJSON(url, body, success, error) {
+        fetch(url, {
+            method: 'POST',
+            headers: HttpHeaders,
+            body: JSON.stringify(body)
+        }).then((res) => {
+            res.json().then( (res) => success(res) );
+        }).catch((res) => error(res))
+    }
+    
+    /**
      * CREATE (Post Request)
      * @param url
      * @param body
