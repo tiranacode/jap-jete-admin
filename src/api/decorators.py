@@ -29,9 +29,8 @@ def hospital_login(handler):
     @wraps(handler)
     def safe_handler(*args, **kwargs):
         session = db.Session()
-        data = json.loads(request.data)
-        session_token = data['session_token']
-        hospital_id = data['hospital_id']
+        session_token = request.args.get('session_token', '')
+        hospital_id = request.args.get('hospital_id', 0)
         print hospital_id
         hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
         if hospital and hospital.session_token and \

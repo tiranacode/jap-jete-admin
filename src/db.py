@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import Column, String, BigInteger, DateTime, Integer, SmallInteger, ForeignKey, Text
+from sqlalchemy import Column, String, BigInteger, DateTime, Integer, \
+                        SmallInteger, ForeignKey, Text, Float, Boolean
 import os
 import uuid
 import datetime, time
@@ -21,13 +22,13 @@ def Init():
 
 def seed():
     session = Session()
-    
+
     qsut = session.query(Hospital).first()
     if qsut is not None and qsut.name is 'QSUT':
         return 0
 
-    session.query(CampainBlood).delete()
-    session.query(Campain).delete()
+    session.query(CampaignBlood).delete()
+    session.query(Campaign).delete()
     session.query(UserHistory).delete()
     session.query(User).delete()
     session.query(Hospital).delete()
@@ -49,16 +50,16 @@ def seed():
     session.add(second_donation)
     session.commit()
 
-    # campains
-    campain = Campain(qsut._id,
-                        'NameOfCampain',
-                        'This is a Campain message',
+    # campaigns
+    campaign = Campaign(qsut._id,
+                        'NameOfCampaign',
+                        'This is a Campaign message',
                         datetime.datetime.now(),
                         datetime.datetime.now() + datetime.timedelta(days=50))
-    session.add(campain)
+    session.add(campaign)
     session.commit()
-    campain_blood = CampainBlood(campain._id, 'A+')
-    session.add(campain_blood)
+    campaign_blood = CampaignBlood(campaign._id, 'A+')
+    session.add(campaign_blood)
     session.commit()
     session.close()
 
@@ -134,14 +135,18 @@ class Hospital(Base):
     address = Column(String(255))
     contact = Column(String(255))
     session_token = Column(String(255))
+    latitude = Column(Float)
+    longitude = Column(Float)
 
-    def __init__(self, name, email, username, password, address, contact):
+    def __init__(self, name, email, username, password, address, contact, latitude=0.0, longitude=0.0):
         self.name = name
         self.email = email
         self.username = username
         self.password = password
         self.address = address
         self.contact = contact
+        self.latitude = latitude
+        self.longitude = longitude
 
     def login(self):
         self.session_token = ''.join([uuid.uuid4().hex for x in range(4)])
@@ -149,8 +154,8 @@ class Hospital(Base):
     def logout(self):
         self.session_token = ''
 
-class Campain(Base):
-    __tablename__ = 'campains'
+class Campaign(Base):
+    __tablename__ = 'campaigns'
 
     _id = Column(BigInteger, primary_key=True)
     hospital_id = Column(BigInteger, ForeignKey('hospitals._id'))
@@ -158,6 +163,7 @@ class Campain(Base):
     message = Column(Text)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
+    active = Column(Boolean)
 
     hospital = relationship('Hospital', foreign_keys=[hospital_id])
 
@@ -167,16 +173,23 @@ class Campain(Base):
         self.message = message
         self.start_date = start_date
         self.end_date = end_date
+        self.active = True
 
-class CampainBlood(Base):
-    __tablename__ = "campains_bloodtypes"
+    def deactivate(self):
+        self.active = False
+
+    def activate(self):
+        self.active = True
+
+class CampaignBlood(Base):
+    __tablename__ = "campaigns_bloodtypes"
 
     _id = Column(BigInteger, primary_key=True)
-    campain_id = Column(BigInteger, ForeignKey('campains._id'))
+    campaign_id = Column(BigInteger, ForeignKey('campaigns._id'))
     blood_type = Column(String(3))
 
-    campain = relationship('Campain', foreign_keys=[campain_id])
+    campaign = relationship('Campaign', foreign_keys=[campaign_id])
 
-    def __init__(self, campain_id, blood_type):
-        self.campain_id = campain_id
+    def __init__(self, campaign_id, blood_type):
+        self.campaign_id = campaign_id
         self.blood_type = blood_type
