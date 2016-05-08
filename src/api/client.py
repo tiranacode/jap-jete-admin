@@ -152,25 +152,26 @@ def get_users():
     return response
 
 
-# @api.route('/donations')
-# def demo_history():
-#     session = db.Session()
-#     users = session.query(db.User).all()
-#     result = []
-#     for u in users:
-#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
-#         result.append({
-#             'user': u.user_id,
-#             'history': [{
-#                 'date': str(d.donation_date),
-#                 'amount': d.amount,
-#                 'hospital': d.hospital.name
-#             } for d in donations]
-#         })
-#     session.close()
-#     return ApiResponse({
-#         'history': result
-#     })
+@api.route('/donations')
+# @require_login
+def demo_history():
+    session = db.Session()
+    users = session.query(db.User).all()
+    result = []
+    for u in users:
+        donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
+        result.append({
+            'user': u.user_id,
+            'history': [{
+                'date': to_timestamp(d.donation_date),
+                'amount': d.amount,
+                'hospital': d.hospital.name
+            } for d in donations]
+        })
+    session.close()
+    return ApiResponse({
+        'history': result
+    })
 
 
 @api.route('/donations/<id>')
@@ -187,7 +188,7 @@ def demo_user_history(id):
     result = {
         'user': user.user_id,
         'history': [{
-            'date': str(d.donation_date),
+            'date': to_timestamp(d.donation_date),
             'amount': d.amount,
             'hospital': d.hospital.name
         } for d in donations]
