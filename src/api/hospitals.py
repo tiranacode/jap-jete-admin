@@ -164,6 +164,28 @@ def delete_campaign(campaign_id):
     return response
 
 
+@hospitals.route('/campaign/<campaign_id>/activate/')
+@hospital_login
+def reactivate_campaign(campaign_id):
+    session = db.Session()
+    campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()
+    if not campaign:
+        session.close()
+        response = ApiResponse({
+            'status': 'wrong campaign id'
+        })
+    else:
+        campaign.activate()
+        session.add(campaign)
+        session.commit()
+        response = ApiResponse({
+            'status': 'ok'
+        })
+
+    session.close()
+    return response
+
+
 # @hospitals.route('/donations')
 # def demo_history():
 #     session = db.Session()
