@@ -16,11 +16,13 @@ BASE_PATH = os.path.join("/api/v1", "hospitals")
 hospitals = Blueprint('hospitals', __name__, url_prefix=BASE_PATH)
 
 @hospitals.route('/campaigns/', methods=['GET'])
-@hospital_login
+# @hospital_login
 def all_campaigns():
     session = db.Session()
     hospital_id = request.args.get('hospital_id', 0)
     campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
+
+    bloodtypes = session.query()
     response = ApiResponse({
         'campaigns': [
             {
@@ -29,7 +31,8 @@ def all_campaigns():
                 'message': c.message,
                 'start_date': to_timestamp(c.start_date),
                 'end_date': to_timestamp(c.end_date),
-                'active': c.active
+                'active': c.active,
+                'bloodtypes': [r.blood_type for r in c.requirement]
             } for c in campaigns]
     })
     session.close()
