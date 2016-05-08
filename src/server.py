@@ -1,12 +1,14 @@
 from flask import Flask
 from webapp.views import webapp
-from api.views import api
+from api.hospitals import hospitals
+from api.client import api as client_api
 import sys
 from db import Session, Base, engine, seed
 
 app = Flask(__name__)
 app.register_blueprint(webapp)
-app.register_blueprint(api)
+app.register_blueprint(hospitals)
+app.register_blueprint(client_api)
 
 DEFAULT_PORT = 5000
 

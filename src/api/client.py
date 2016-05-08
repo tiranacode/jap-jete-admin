@@ -1,6 +1,4 @@
-from flask import Blueprint, render_template, abort, request
-from pushjack import GCMClient
-import bcrypt
+from flask import Blueprint, abort, request
 import db
 
 import os
@@ -9,7 +7,7 @@ import requests
 import config
 import time, datetime
 from utils import ApiResponse, to_timestamp
-from decorators import require_login, hospital_login
+from decorators import require_login
 
 
 BASE_PATH = os.path.join("/api", "v1")
@@ -77,16 +75,6 @@ def login():
     return response
 
 
-# List blood types
-@api.route('/blood-types/')
-def get_blood_types():
-    session = db.Session()
-    response = ApiResponse([x.type for x in session.query(db.BloodType).all()])
-    session.close()
-    return response
-
-
-
 @api.route('/user/', methods=['PUT'])
 @require_login
 def update_profile():
@@ -145,36 +133,6 @@ def get_profile():
     return response
 
 
-@api.route('/gcm-message/', methods=['POST'])
-def gcm_message():
-    if request.data.get('message'):
-        gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
-
-        alert = {
-            'subject': 'Subject goes here', # TODO: set a better subject
-            'message': request.data.get('message')
-        }
-
-        session = db.Session()
-        gcm_id_list = [user.gcm_id for user in session.query(db.User).all()]
-        session.close()
-
-        response = gcmClient.send(gcm_id_list,
-                                  alert,
-                                  time_to_live=3600)
-        if response:
-            return ApiResponse({
-                'message': 'Mesazhi u dergua'
-            })
-        else:
-            return ApiResponse({
-                'message': 'Father, why have you forsaken me?'
-            })
-    else:
-        return ApiResponse({
-            'message': 'Can\'t send a blank message...'
-        })
-
 @api.route('/users/', methods=['GET'])
 def get_users():
     session = db.Session()
@@ -193,25 +151,26 @@ def get_users():
     session.close()
     return response
 
-@api.route('/donations')
-def demo_history():
-    session = db.Session()
-    users = session.query(db.User).all()
-    result = []
-    for u in users:
-        donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
-        result.append({
-            'user': u.user_id,
-            'history': [{
-                'date': str(d.donation_date),
-                'amount': d.amount,
-                'hospital': d.hospital.name
-            } for d in donations]
-        })
-    session.close()
-    return ApiResponse({
-        'history': result
-    })
+
+# @api.route('/donations')
+# def demo_history():
+#     session = db.Session()
+#     users = session.query(db.User).all()
+#     result = []
+#     for u in users:
+#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
+#         result.append({
+#             'user': u.user_id,
+#             'history': [{
+#                 'date': str(d.donation_date),
+#                 'amount': d.amount,
+#                 'hospital': d.hospital.name
+#             } for d in donations]
+#         })
+#     session.close()
+#     return ApiResponse({
+#         'history': result
+#     })
 
 
 @api.route('/donations/<id>')
@@ -238,6 +197,7 @@ def demo_user_history(id):
         'history': result
     })
 
+
 @api.route('/campains/', methods=['GET'])
 # @require_login
 def get_campains_by_bloodtype():
@@ -256,10 +216,14 @@ def get_campains_by_bloodtype():
     campains = [
         {
             'name': c.campain.name,
-            'hospital': c.campain.hospital.name,
+            'hospital': {
+                'name': c.campain.hospital.name,
+                'latitude': c.campain.hospital.latitude,
+                'longitude': c.campain.hospital.longitude,
+            },
             'message': c.campain.message,
-            'start_date': str(c.campain.start_date),
-            'end_date': str(c.campain.end_date)
+            'start_date': to_timestamp(c.campain.start_date),
+            'end_date': to_timestamp(c.campain.end_date)
         } for c in campains_blood]
     session.close()
 
@@ -269,109 +233,20 @@ def get_campains_by_bloodtype():
     })
 
 
-@api.route('/campains/', methods=['POST'])
-# @require_login
-def create_campain():
-    session = db.Session()
-    data = json.loads(request.data)
-
-    hospital = session.query(db.Hospital).first() # TODO: Dont use 1st
-    name = data['name']
-    message = data['message']
-    bloodtypes = data['bloodtypes']
-    start_date = datetime.datetime.now()
-    end_date = datetime.datetime.now() + datetime.timedelta(days=10)
-    campain = db.Campain(hospital._id, name, message, start_date, end_date)
-    session.add(campain)
-    session.commit()
-
-    for bloodtype in bloodtypes:
-        campain_blood = db.CampainBlood(campain._id, bloodtype)
-        session.add(campain_blood)
-
-    session.commit()
-    session.close()
-
-    return ApiResponse({
-        'status': 'ok'
-    })
-
-@api.route('/hospitals/', methods=['GET'])
-# @require_login
-def list_hospitals():
-    session = db.Session()
-    hospitals = session.query(db.Hospital).all()
-    session.close()
-    return ApiResponse({
-        'hospitals': [{
-            'id': h._id,
-            'name': h.name,
-            'email': h.email,
-            'address': h.address,
-            'contact': h.contact,
-            'latitude': h.latitude,
-            'longitude': h.longitude
-        } for h in hospitals]
-    })
-
-@api.route('/hospital-login/', methods=['POST'])
-def login_hospital():
-    data = json.loads(request.data)
-
-    username = data['username']
-    password = data['password'].encode('ascii', 'replace')
-
-    session = db.Session()
-    h = session.query(db.Hospital).filter_by(username=username).first()
-    pwd = h.password.encode('ascii', 'replace')
-
-    if not h or bcrypt.hashpw(password, pwd) != pwd:
-        session.close()
-        return ApiResponse(config.ACCESS_DENIED_MSG, status='403')
-
-    h.login()
-    session.add(h)
-    session.commit()
-    response = ApiResponse({
-        'id': h._id,
-        'session_token': h.session_token
-    })
-    session.close()
-    return response
-
-@api.route('/hospital-logout/', methods=['POST'])
-@hospital_login
-def logout():
-    data = json.loads(request.data)
-    session = db.Session()
-    hospital_id = data['hospital_id']
-    # TODO: shiko per injection
-    hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
-    hospital.logout()
-    session.add(hospital)
-    session.commit()
-    session.close()
-    return ApiResponse({
-        'status': 'ok'
-    })
-
-# @api.route('/whoami-hospital/', methods=['GET'])
-# @hospital_login
-# def things():
+# @api.route('/hospitals/', methods=['GET'])
+# # @require_login
+# def list_hospitals():
 #     session = db.Session()
-#     hospital_id = request.args.get('hospital_id', 0)
-#     h = session.query(db.Hospital).filter_by(_id=hospital_id).first()
-#     if h:
-#         return ApiResponse({
-#             'data': {
-#                 'id': h._id,
-#                 'name': h.name,
-#                 'email': h.email,
-#                 'address': h.address,
-#                 'contact': h.contact
-#             }
-#         })
-#     else:
-#         return ApiResponse({
-#             'data': 'none'
-#         })
+#     hospitals = session.query(db.Hospital).all()
+#     session.close()
+#     return ApiResponse({
+#         'hospitals': [{
+#             'id': h._id,
+#             'name': h.name,
+#             'email': h.email,
+#             'address': h.address,
+#             'contact': h.contact,
+#             'latitude': h.latitude,
+#             'longitude': h.longitude
+#         } for h in hospitals]
+#     })
