@@ -15,82 +15,25 @@ from decorators import hospital_login
 BASE_PATH = os.path.join("/api/v1", "hospitals")
 hospitals = Blueprint('hospitals', __name__, url_prefix=BASE_PATH)
 
+@hospitals.route('/campaigns/', methods=['GET'])
+@hospital_login
+def all_campaigns():
+    session = db.Session()
+    hospital_id = request.args.get('hospital_id', 0)
+    campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
+    response = ApiResponse({
+        'campaigns': [
+            {
+                'id': c._id,
+                'name': c.name,
+                'message': c.message,
+                'start_date': to_timestamp(c.start_date),
+                'end_date': to_timestamp(c.end_date)
+            } for c in campaigns]
+    })
+    session.close()
+    return response
 
-# @hospitals.route('/donations')
-# def demo_history():
-#     session = db.Session()
-#     users = session.query(db.User).all()
-#     result = []
-#     for u in users:
-#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
-#         result.append({
-#             'user': u.user_id,
-#             'history': [{
-#                 'date': to_timestamp(d.donation_date),
-#                 'amount': d.amount,
-#                 'hospital': d.hospital.name
-#             } for d in donations]
-#         })
-#     session.close()
-#     return ApiResponse({
-#         'history': result
-#     })
-
-
-# @hospitals.route('/donations/<id>')
-# def demo_user_history(id):
-#     session = db.Session()
-#     user = session.query(db.User).filter_by(user_id=id).first()
-#     if not user:
-#         return ApiResponse({
-#             'status': 'error',
-#             'message': 'No user with id {0} found'.format(id)
-#         })
-#
-#     donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
-#     result = {
-#         'user': user.user_id,
-#         'history': [{
-#             'date': to_timestamp(d.donation_date),
-#             'amount': d.amount,
-#             'hospital': d.hospital.name
-#         } for d in donations]
-#     }
-#     session.close()
-#     return ApiResponse({
-#         'history': result
-#     })
-
-
-# @hospitals.route('/campaigns/', methods=['GET'])
-# # @hospital_login
-# def get_campaigns_by_bloodtype():
-#     session = db.Session()
-#     user_id = request.args.get('user_id', 0)
-#
-#     # filter by user Blood Type
-#     user = session.query(db.User).filter_by(user_id=user_id).first()
-#     if not user:
-#         return ApiResponse({
-#             'status': 'error',
-#             'message': 'No user with id {0} found'.format(user_id)
-#         })
-#
-#     campaigns_blood = session.query(db.CampaignBlood).filter_by(blood_type=user.blood_type).all()
-#     campaigns = [
-#         {
-#             'name': c.campaign.name,
-#             'hospital': c.campaign.hospital.name,
-#             'message': c.campaign.message,
-#             'start_date': to_timestamp(c.campaign.start_date),
-#             'end_date': to_timestamp(c.campaign.end_date)
-#         } for c in campaigns_blood]
-#     session.close()
-#
-#     # return data
-#     return ApiResponse({
-#         "campaigns": campaigns
-#     })
 
 
 @hospitals.route('/campaigns/', methods=['POST'])
@@ -198,3 +141,79 @@ def logout():
 #         return ApiResponse({
 #             'data': 'none'
 #         })
+
+# @hospitals.route('/donations')
+# def demo_history():
+#     session = db.Session()
+#     users = session.query(db.User).all()
+#     result = []
+#     for u in users:
+#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
+#         result.append({
+#             'user': u.user_id,
+#             'history': [{
+#                 'date': to_timestamp(d.donation_date),
+#                 'amount': d.amount,
+#                 'hospital': d.hospital.name
+#             } for d in donations]
+#         })
+#     session.close()
+#     return ApiResponse({
+#         'history': result
+#     })
+
+
+# @hospitals.route('/donations/<id>')
+# def demo_user_history(id):
+#     session = db.Session()
+#     user = session.query(db.User).filter_by(user_id=id).first()
+#     if not user:
+#         return ApiResponse({
+#             'status': 'error',
+#             'message': 'No user with id {0} found'.format(id)
+#         })
+#
+#     donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
+#     result = {
+#         'user': user.user_id,
+#         'history': [{
+#             'date': to_timestamp(d.donation_date),
+#             'amount': d.amount,
+#             'hospital': d.hospital.name
+#         } for d in donations]
+#     }
+#     session.close()
+#     return ApiResponse({
+#         'history': result
+#     })
+
+
+# @hospitals.route('/campaigns/', methods=['GET'])
+# # @hospital_login
+# def get_campaigns_by_bloodtype():
+#     session = db.Session()
+#     user_id = request.args.get('user_id', 0)
+#
+#     # filter by user Blood Type
+#     user = session.query(db.User).filter_by(user_id=user_id).first()
+#     if not user:
+#         return ApiResponse({
+#             'status': 'error',
+#             'message': 'No user with id {0} found'.format(user_id)
+#         })
+#
+#     campaigns_blood = session.query(db.CampaignBlood).filter_by(blood_type=user.blood_type).all()
+#     campaigns = [
+#         {
+#             'name': c.campaign.name,
+#             'hospital': c.campaign.hospital.name,
+#             'message': c.campaign.message,
+#             'start_date': to_timestamp(c.campaign.start_date),
+#             'end_date': to_timestamp(c.campaign.end_date)
+#         } for c in campaigns_blood]
+#     session.close()
+#
+#     # return data
+#     return ApiResponse({
+#         "campaigns": campaigns
+#     })
