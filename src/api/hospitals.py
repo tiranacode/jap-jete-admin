@@ -125,7 +125,22 @@ def create_campaign():
     session.commit()
 
     gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
-    alert = {'subject': name, 'message': message}
+    alert = {
+        'subject': 'Fushate e re',
+        'message': campaign.hospital.name,
+        'data': {
+            'id': campaign._id,
+            'name': name,
+            'hospital': {
+                'name': campaign.hospital.name,
+                'latitude': campaign.hospital.latitude,
+                'longitude': campaign.hospital.longitude,
+            },
+            'message': message,
+            'start_date': to_timestamp(start_date),
+            'end_date': to_timestamp(end_date)
+        }
+    }
 
     interested_users = session.query(db.User).filter(db.User.blood_type.in_(bloodtypes))
     gcm_id_list = [user.gcm_id for user in interested_users]
