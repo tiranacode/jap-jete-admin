@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import Column, String, BigInteger, DateTime, Integer, \
-                        SmallInteger, ForeignKey, Text, Float
+                        SmallInteger, ForeignKey, Text, Float, Boolean
 import os
 import uuid
 import datetime, time
@@ -163,6 +163,7 @@ class Campaign(Base):
     message = Column(Text)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
+    active = Column(Boolean)
 
     hospital = relationship('Hospital', foreign_keys=[hospital_id])
 
@@ -172,6 +173,13 @@ class Campaign(Base):
         self.message = message
         self.start_date = start_date
         self.end_date = end_date
+        self.active = True
+
+    def deactivate(self):
+        self.active = False
+
+    def activate(self):
+        self.active = True
 
 class CampaignBlood(Base):
     __tablename__ = "campaigns_bloodtypes"

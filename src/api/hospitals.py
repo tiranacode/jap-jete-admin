@@ -28,16 +28,16 @@ def all_campaigns():
                 'name': c.name,
                 'message': c.message,
                 'start_date': to_timestamp(c.start_date),
-                'end_date': to_timestamp(c.end_date)
+                'end_date': to_timestamp(c.end_date),
+                'active': c.active
             } for c in campaigns]
     })
     session.close()
     return response
 
 
-
 @hospitals.route('/campaigns/', methods=['POST'])
-# @hospital_login
+@hospital_login
 def create_campaign():
     session = db.Session()
     data = json.loads(request.data)
@@ -77,6 +77,27 @@ def create_campaign():
         return ApiResponse({
             'status': 'some error occurred'
         })
+
+@hospitals.route('/campaign/<campaign_id>', methods=['DELETE'])
+@hospital_login
+def delete_campaign(campaign_id):
+    session = db.Session()
+    # hospital_id = request.args.get('hospital_id', 0)
+    campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()
+    if not campaign:
+        response = ApiResponse({
+            'status': 'wrong campaign id'
+        })
+    else:
+        campaign.deactivate()
+        session.add(campaign)
+        session.commit()
+        response = ApiResponse({
+            'status': 'ok'
+        })
+
+    session.close()
+    return response
 
 
 @hospitals.route('/login/', methods=['POST'])
