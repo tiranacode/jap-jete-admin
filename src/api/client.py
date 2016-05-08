@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, abort, request
-from pushjack import GCMClient
+from flask import Blueprint, abort, request
 import db
 
 import os
@@ -37,9 +36,9 @@ def login():
     gcm_id = data['gcm_id']
     fb_token = data['fb_token']
 
-    payload= {
+    payload = {
         'access_token': fb_token,
-        'fields': 'id'
+        'fields': ['id', 'name']
     }
     fb_response = requests.get(config.FB_ENDPOINT, params=payload).json()
     if 'error' in fb_response:
@@ -58,7 +57,8 @@ def login():
         if gcm_id:
             user.gcm_id = gcm_id
     else:
-        user = db.User(user_id, fb_token=fb_token, gcm_id=gcm_id)
+        name = fb_response['name'].split()
+        user = db.User(user_id, name[0], name[-1], fb_token=fb_token, gcm_id=gcm_id)
                     #blood_type=blood_type)
         session.add(user)
     session.commit()
@@ -73,16 +73,6 @@ def login():
     })
     session.close()
     return response
-
-
-# List blood types
-@api.route('/blood-types/')
-def get_blood_types():
-    session = db.Session()
-    response = ApiResponse([x.type for x in session.query(db.BloodType).all()])
-    session.close()
-    return response
-
 
 
 @api.route('/user/', methods=['PUT'])
@@ -143,53 +133,88 @@ def get_profile():
     return response
 
 
-@api.route('/gcm-message/', methods=['POST'])
-def gcm_message():
-    if request.form.get('message'):
-        gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
-
-        alert = {
-            'subject': 'Subject goes here', # TODO: set a better subject
-            'message': request.form.get('message')
-        }
-
-        session = db.Session()
-        gcm_id_list = [user.gcm_id for user in session.query(db.User).all()]
-        session.close()
-
-        response = gcmClient.send(gcm_id_list,
-                                  alert,
-                                  time_to_live=3600)
-        if response:
-            return ApiResponse({
-                'message': 'Mesazhi u dergua'
-            })
-        else:
-            return ApiResponse({
-                'message': 'Father, why have you forsaken me?'
-            })
-    else:
-        return ApiResponse({
-            'message': 'Can\'t send a blank message...'
-        })
-
 @api.route('/users/', methods=['GET'])
 def get_users():
-
     session = db.Session()
-    
-    
-    response = ApiResponse([  
+    response = ApiResponse([
         {
             'user_id': x.user_id,
-            'blood_type': x.blood_type, 
-            'name': 'name',
-            'surname': 'surname',
+            'blood_type': x.blood_type,
             'email': x.email,
             'address': x.address,
-            'phone_number': x.phone_number
+            'phone_number': x.phone_number,
+            'first_name': x.first_name,
+            'last_name': x.last_name
         }
         for x in session.query(db.User).all()])
-    
+
     session.close()
     return response
+
+
+@api.route('/donations/')
+@api.route('/donations/<int:user_id>')
+@require_login
+def user_past_donations(user_id=None):
+    session = db.Session()
+
+    if user_id is None:
+        user_id = request.args.get('user_id', 0)
+
+    user = session.query(db.User).filter_by(user_id=user_id).first()
+    if not user:
+        session.close()
+        return ApiResponse({
+            'status': 'error',
+            'message': 'No user with id {0} found'.format(id)
+        })
+
+    donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
+    result = {
+        'user': user.user_id,
+        'history': [{
+            'date': to_timestamp(d.donation_date),
+            'amount': d.amount,
+            'hospital': d.hospital.name
+        } for d in donations]
+    }
+    session.close()
+    return ApiResponse({
+        'history': result
+    })
+
+
+@api.route('/campaigns/', methods=['GET'])
+@require_login
+def get_campaigns_by_bloodtype():
+    session = db.Session()
+    user_id = request.args.get('user_id', 0)
+
+    # filter by user Blood Type
+    user = session.query(db.User).filter_by(user_id=user_id).first()
+    if not user:
+        session.close()
+        return ApiResponse({
+            'status': 'error',
+            'message': 'No user with id {0} found'.format(user_id)
+        })
+
+    campaigns_blood = session.query(db.CampaignBlood).filter_by(blood_type=user.blood_type).all()
+    campaigns = [
+        {
+            'name': c.campaign.name,
+            'hospital': {
+                'name': c.campaign.hospital.name,
+                'latitude': c.campaign.hospital.latitude,
+                'longitude': c.campaign.hospital.longitude,
+            },
+            'message': c.campaign.message,
+            'start_date': to_timestamp(c.campaign.start_date),
+            'end_date': to_timestamp(c.campaign.end_date)
+        } for c in campaigns_blood]
+    session.close()
+
+    # return data
+    return ApiResponse({
+        "campaigns": campaigns
+    })

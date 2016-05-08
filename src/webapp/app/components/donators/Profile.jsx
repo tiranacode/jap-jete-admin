@@ -6,6 +6,7 @@ export default class Profile extends React.Component{
     
     constructor(props){
         super(props);
+        this.onClick = this.onClick.bind(this);
         this.state = {
             edit: false,
             buttonText: "Ndrysho"
@@ -35,7 +36,7 @@ export default class Profile extends React.Component{
                 <div className="ProfileDiv">
                     <ul>
                         <li>
-                            <span>{this.props.data.name}</span> {this.props.data.surname}
+                            <span>{this.props.data.first_name}</span> {this.props.data.last_name}
                         </li>
                         <li>
                             <span>ID:</span> {this.props.data.user_id}
@@ -49,24 +50,24 @@ export default class Profile extends React.Component{
         );
         
         if(this.state.edit == true) display = (
-            <div className="ProfileEdit">
+            <div className="ProfileEdit form-data">
                 <ul>
                     <li>
                         <label>
                             <span>Emri</span>
-                            <input name="name" value={this.props.data.name} type="text" />
+                            <input name="name" className="form-control" value={this.props.data.first_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Mbiemri</span>
-                            <input name="surname" value={this.props.data.surname} type="text" />
+                            <input name="surname" className="form-control" value={this.props.data.last_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Grup Gjaku</span>
-                            <input name="bloodtype" value={this.props.data.blood_type} type="text" />
+                            <input name="bloodtype" className="form-control" value={this.props.data.blood_type} type="text" />
                         </label>
                     </li>
                 </ul>
@@ -76,7 +77,11 @@ export default class Profile extends React.Component{
         return (
             <div>
                 {display}
-                <button onClick={this.onClick.bind(this)}>{this.state.buttonText}</button>
+                <button 
+                    className="btn" 
+                    onClick={this.onClick}
+                >{this.state.buttonText}
+                </button>
             </div>
         )
     }

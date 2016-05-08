@@ -18,7 +18,8 @@ config = {
         'requirements.txt',
     ],
     'excludes': [
-        'src/webapp/node_modules'
+        'src/webapp/node_modules',
+        'src/webapp/static/dist/vendors.js'
     ],
     'dependencies': [
         'python-pip',
@@ -27,7 +28,9 @@ config = {
         'python-dev',
         'postgresql',
         'python-psycopg2',
-        'libpq-dev'
+        'libpq-dev',
+        'libssl-dev',
+        'libffi-dev'
     ],
     'region': 'eu-central-1',
     'instance_name': 'tiranacode'
@@ -119,7 +122,7 @@ def full_install():
     install_service()
     restart_service()
 
-    sudo("sudo -u postgres psql")
+    # sudo("sudo -u postgres psql")
     
 @task
 def postgres_init():

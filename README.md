@@ -12,9 +12,6 @@ virtualenv venv
 source venv/bin/activate
 # Install required python libraries
 pip install -r requirements.txt
-# Install node modules
-npm install
-
 
 # start a local server
 python server.py
@@ -22,6 +19,11 @@ python server.py
 
 # ReactJS preset
 ```bash
+cd src/webapp
+
+# Install node modules
+npm install
+
 # Transform JSX for development
 gulp default
 
