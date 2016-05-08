@@ -8,8 +8,8 @@ export const Endpoints = {
     BloodTypes: API_URL + "blood-types",
     Users: API_URL + "users",
     FacebookPicture: "http://graph.facebook.com/{0}/picture?width=150",
-    CampaignsList: API_URL + "campains/",
-    CreateCampaign: API_URL + "campains/"
+    CampaignsList: API_URL + "campaigns/",
+    CreateCampaign: API_URL + "campaigns/"
 };
 
 export const HttpHeaders = {

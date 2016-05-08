@@ -2,6 +2,7 @@ import React from 'react';
 import BloodFilter from './forms/BloodFilter';
 import {Endpoints} from './../configs/Url';
 import Rest from './../utils/Rest';
+import CampaignsList from './campaigns/CampaignsList';
 
 
 export default class Campaigns extends React.Component{
@@ -20,7 +21,24 @@ export default class Campaigns extends React.Component{
             message: "",
             datetime: "",
             action: "",
-            bloodTypes: []
+            bloodTypes: [],
+            campaignsList: [
+                {
+                    id: 1,
+                    title: "Hello",
+                    startDate: "10/10/2015",
+                    active: true,
+                    bloodTypes: ["A+", "A-"],
+                    message: "Hello Hello Hello"
+                }, 
+                {
+                    id: 2,
+                    title: "World",
+                    startDate: "10/10/2015",
+                    active: false,
+                    bloodTypes: ["A+", "A-"],
+                    message: "Hello Hello Hello"
+                }]
         }
     }
     
@@ -84,7 +102,10 @@ export default class Campaigns extends React.Component{
             <div className="campaigns row">
                 <div className="col-md-5">
                     <div className="box-shadow component">
-                        {this.state.hospital}
+                        <CampaignsList 
+                            title={this.state.hospital} 
+                            campaigns={this.state.campaignsList}
+                        />
                     </div>
                 </div>
                 <div className="col-md-7 campaigns-right">
@@ -94,7 +115,7 @@ export default class Campaigns extends React.Component{
                     <div className="box-shadow component">
                         <form action="" role="form">
                             <h4>{this.state.hospital}</h4>
-                            
+                                
                             <div className="form-group">
                                 <input 
                                     className="form-control" 

@@ -121,7 +121,7 @@ def full_install():
     install_service()
     restart_service()
 
-    sudo("sudo -u postgres psql")
+    # sudo("sudo -u postgres psql")
     
 @task
 def postgres_init():

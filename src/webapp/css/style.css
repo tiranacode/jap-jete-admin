@@ -185,12 +185,6 @@ body{
     padding: 0;
 }
 
-.campaigns-left{
-}
-
-.campaigns-right{
-}
-
 .component{
     background-color: white;
     padding: 10px;
@@ -199,4 +193,12 @@ body{
 
 .navbar-brand{
     padding: 11px 15px;
+}
+
+.campaignElement{
+    padding: 5px;
+}
+
+.right{
+    float: right;
 }
