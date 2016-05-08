@@ -14,31 +14,20 @@ export default class Campaigns extends React.Component{
         this.updateMessage = this.updateMessage.bind(this);
         this.createCampaign = this.createCampaign.bind(this);
         this.bloodFilterUpdate = this.bloodFilterUpdate.bind(this);
+        this.editCampaign = this.editCampaign.bind(this);
+        this.startCampaignEdit = this.startCampaignEdit.bind(this);
         
         this.state = {
             hospital: "Qendra Spitalore Universitare Tirane",
             title: "",
             message: "",
             datetime: "",
-            action: "",
-            bloodTypes: [],
-            campaignsList: [
-                {
-                    id: 1,
-                    title: "Hello",
-                    startDate: "10/10/2015",
-                    active: true,
-                    bloodTypes: ["A+", "A-"],
-                    message: "Hello Hello Hello"
-                }, 
-                {
-                    id: 2,
-                    title: "World",
-                    startDate: "10/10/2015",
-                    active: false,
-                    bloodTypes: ["A+", "A-"],
-                    message: "Hello Hello Hello"
-                }]
+            id: 0,                                          //id of campagin when editing
+            action: "",                                     //message of request
+            bloodTypes: [],                                 //list of bloodTypes selected 
+            campaignsList: [],                              //list of all campaigns
+            editMode: false,                                //wheather a campaign is being edited
+            editCampaign: null                              //the campaign in edit mode
         }
     }
     
@@ -58,12 +47,47 @@ export default class Campaigns extends React.Component{
             
         Rest.createJSON(Endpoints.CreateCampaign, data,
             (res) => {
-                console.log(res);
                 if(res.status && res.status == "ok")
                     self.setState({
                         title: "",
                         message: "",
                         action: "Fushata u fillua me sukses"
+                    });
+                else self.setState({
+                        action: "Gabim"
+                    });
+            },
+            (err) => {
+                console.error(err);
+            }
+        );
+        
+    }
+    
+    /**
+     * Send edited data
+     */
+    editCampaign(event){
+        //TODO
+        console.log("Editing")
+        
+        event.preventDefault();
+        if(this.state.title == "" || this.state.message == "")
+            return;
+        var self = this;
+        var data = {
+            name: this.state.title,
+            message: this.state.message,
+            bloodtypes: this.state.bloodTypes
+        }
+        console.log(data);
+        Rest.update(Endpoints.CreateCampaign + this.state.id, data,
+            (res) => {
+                if(res.status && res.status == "ok")
+                    self.setState({
+                        title: "",
+                        message: "",
+                        action: "Fushata u ndryshua me sukses"
                     });
                 else self.setState({
                         action: "Gabim"
@@ -89,6 +113,20 @@ export default class Campaigns extends React.Component{
     }
     
     /**
+     * A campaign was clicked to edit
+     */
+    startCampaignEdit(campaign){
+        this.setState({
+            editMode: true,
+            editCampaign: campaign,
+            title: campaign.title,
+            message: campaign.message,
+            bloodTypes: campaign.bloodTypes,
+            id: campaign.id
+        });
+    }
+    
+    /**
      * Called when a blood type is checked/unchecked
      */
     bloodFilterUpdate(bloodTypes){
@@ -103,8 +141,7 @@ export default class Campaigns extends React.Component{
         }
         
         Rest.readJSON( Endpoints.CampaignsList, data,
-            (res) => {
-                console.log(res);   
+            (res) => { 
                 var obj = [];
                 res.campaigns.map((val) =>{
                     obj.push({
@@ -117,7 +154,6 @@ export default class Campaigns extends React.Component{
                     });
                 });
                 
-                console.log(obj);
                 this.setState({
                     campaignsList: obj
                 });
@@ -128,11 +164,13 @@ export default class Campaigns extends React.Component{
     }
     
     render(){
+        
         return (
             <div className="campaigns row">
                 <div className="col-md-5">
                     <div className="box-shadow component">
                         <CampaignsList 
+                            campaignEdit={this.startCampaignEdit}
                             title={this.state.hospital} 
                             campaigns={this.state.campaignsList}
                         />
@@ -140,7 +178,10 @@ export default class Campaigns extends React.Component{
                 </div>
                 <div className="col-md-7 campaigns-right">
                     <div className="box-shadow">
-                        <BloodFilter onUpdate={this.bloodFilterUpdate} />
+                        <BloodFilter 
+                            onUpdate={this.bloodFilterUpdate} 
+                            bloodTypes={this.state.bloodTypes}
+                        />
                     </div>
                     <div className="box-shadow component">
                         <form action="" role="form">
@@ -164,7 +205,7 @@ export default class Campaigns extends React.Component{
                                 <span className="message">{this.state.action}</span>
                                 <input 
                                     type="submit" 
-                                    onClick={this.createCampaign} 
+                                    onClick={ this.state.editMode ? this.editCampaign : this.createCampaign} 
                                     className="btn" 
                                     value="Nis fushaten"
                                 />

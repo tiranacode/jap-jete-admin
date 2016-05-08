@@ -18,7 +18,8 @@ config = {
         'requirements.txt',
     ],
     'excludes': [
-        'src/webapp/node_modules'
+        'src/webapp/node_modules',
+        'src/webapp/static/dist/vendors.js'
     ],
     'dependencies': [
         'python-pip',

@@ -17,7 +17,12 @@ export default class BloodType extends React.Component{
             selected: newVal
         });
         this.props.onUpdate(newVal, this.props.blood);
-        console.log(newVal);
+    }
+    
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            selected: nextProps.selected
+        });
     }
     
     render(){
@@ -30,7 +35,7 @@ export default class BloodType extends React.Component{
                         className="form-control"
                         value={this.props.blood} 
                         onChange={this.onChange}
-                        selected={this.state.selected}
+                        checked={this.state.selected}
                     />
                     {this.props.blood}
                 </label>

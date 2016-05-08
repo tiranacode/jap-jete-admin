@@ -3,12 +3,24 @@ import Campaign from './Campaign';
 
 export default class CampaignsList extends React.Component{
     
+    constructor(params){
+        super(params);
+        this.campaignEdit = this.campaignEdit.bind(this);
+    }
+    
+    campaignEdit(campaign){
+        this.props.campaignEdit(campaign);
+    }
+    
     render(){
+        
         
         var ret = this.props.campaigns.map(
             (val) => {
                 return(
-                    <Campaign key={val.id}
+                    <Campaign 
+                        onEdit={this.campaignEdit}
+                        key={val.id}
                         data={val} 
                     />
                 )

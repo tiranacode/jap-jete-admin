@@ -6,6 +6,7 @@ export default class Campaign extends React.Component{
     constructor(params){
         super(params);
         this.onClick = this.onClick.bind(this);
+        this.endCampaign = this.endCampaign.bind(this);
         this.state = {
             buttonText: "Mbyll"
         }
@@ -22,6 +23,7 @@ export default class Campaign extends React.Component{
     
     onClick(){
         //TODO: open campaign for edit
+        this.props.onEdit(this.props.data);
     }
     
     endCampaign(){
@@ -35,6 +37,7 @@ export default class Campaign extends React.Component{
                 <div>
                     <a onClick={this.onClick}>
                         <span>{this.props.data.title}</span>
+                        <span className="campaignBloods">  -  {this.props.data.bloodTypes.toString()}</span>
                     </a>
                     <span className="right">
                         <button 

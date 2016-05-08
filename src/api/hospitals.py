@@ -82,7 +82,8 @@ def all_hospitals():
 def all_campaigns():
     session = db.Session()
     hospital_id = request.args.get('hospital_id', 0)
-    campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
+    #campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
+    campaigns = session.query(db.Campaign).all()
 
     bloodtypes = session.query()
     response = ApiResponse({
@@ -108,7 +109,9 @@ def create_campaign():
     data = json.loads(request.data)
     hospital_id = request.args.get('hospital_id', 0)
 
-    hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+    # hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
+    hospital = session.query(db.Hospital).first()
+    
     name = data['name']
     message = data['message']
     bloodtypes = data['bloodtypes']

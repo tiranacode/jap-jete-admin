@@ -82,7 +82,9 @@ export default class Rest {
             method: 'PUT',
             headers: HttpHeaders,
             body: JSON.stringify(body)
-        }).then((res) => success(res)).catch((res) => error(res))
+        }).then((res) => {
+            res.json().then( (res) => success(res) );    
+        }).catch((res) => error(res))
     }
 
     /**

@@ -202,3 +202,11 @@ body{
 .right{
     float: right;
 }
+
+.campaignBloods{
+    color:#D30101;
+}
+
+.campaignElement a{
+    cursor: pointer;
+}

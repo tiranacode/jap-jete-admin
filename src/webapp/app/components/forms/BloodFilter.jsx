@@ -31,21 +31,40 @@ export default class BloodFilter extends React.Component{
     bloodUpdateAll(selected){
         //TODO
     }
-    
+         
+    componentWillReceiveProps(nextProps){
+        if(nextProps.bloodTypes)
+            this.setState({
+                bloodTypes: nextProps.bloodTypes
+            });
+    }
     
     render(){
-        
         //group the filters
         var filters = [];
         for(var i=0; i<Constants.BloodTypes.length; i+=2){
             var group = [];
-            group.push( <BloodType key={i} 
-                onUpdate={this.bloodUpdate} 
-                blood={Constants.BloodTypes[i]} 
+            var selected = false;
+            if(this.state.bloodTypes.indexOf(Constants.BloodTypes[i]) > -1)
+                selected = true;
+            group.push( 
+                <BloodType 
+                    key={i} 
+                    onUpdate={this.bloodUpdate} 
+                    blood={Constants.BloodTypes[i]} 
+                    selected={selected}
             />);
-            group.push( <BloodType key={i+1} 
-                onUpdate={this.bloodUpdate} 
-                blood={Constants.BloodTypes[i+1]} 
+            
+            selected = false;
+            if(this.state.bloodTypes.indexOf(Constants.BloodTypes[i+1]) > -1)
+                selected = true;
+            
+            group.push( 
+                <BloodType 
+                    key={i+1} 
+                    onUpdate={this.bloodUpdate} 
+                    blood={Constants.BloodTypes[i+1]}
+                    selected={selected}
             />);
             
             filters.push(
@@ -61,8 +80,11 @@ export default class BloodFilter extends React.Component{
                     {filters}
                 </div>
                 <div className="bloodFilter-right">
-                    <BloodType blood="Te gjithe" 
-                        onUpdate={this.bloodUpdateAll} />
+                    <BloodType 
+                        blood="Te gjithe" 
+                        onUpdate={this.bloodUpdateAll} 
+                        selected={false}
+                    />
                 </div>
             </div>
         );
