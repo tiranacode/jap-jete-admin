@@ -175,7 +175,7 @@ def get_users():
 
 
 @api.route('/donations/<id>')
-# @require_login
+@require_login
 def user_past_donations(id):
     session = db.Session()
     user = session.query(db.User).filter_by(user_id=id).first()
@@ -201,7 +201,7 @@ def user_past_donations(id):
 
 
 @api.route('/campaigns/', methods=['GET'])
-# @require_login
+@require_login
 def get_campaigns_by_bloodtype():
     session = db.Session()
     user_id = request.args.get('user_id', 0)

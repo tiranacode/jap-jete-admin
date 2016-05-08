@@ -16,7 +16,7 @@ BASE_PATH = os.path.join("/api/v1", "hospitals")
 hospitals = Blueprint('hospitals', __name__, url_prefix=BASE_PATH)
 
 @hospitals.route('/campaigns/', methods=['GET'])
-# @hospital_login
+@hospital_login
 def all_campaigns():
     session = db.Session()
     hospital_id = request.args.get('hospital_id', 0)
