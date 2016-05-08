@@ -198,9 +198,9 @@ def demo_user_history(id):
     })
 
 
-@api.route('/campains/', methods=['GET'])
+@api.route('/campaigns/', methods=['GET'])
 # @require_login
-def get_campains_by_bloodtype():
+def get_campaigns_by_bloodtype():
     session = db.Session()
     user_id = request.args.get('user_id', 0)
 
@@ -212,24 +212,24 @@ def get_campains_by_bloodtype():
             'message': 'No user with id {0} found'.format(user_id)
         })
 
-    campains_blood = session.query(db.CampainBlood).filter_by(blood_type=user.blood_type).all()
-    campains = [
+    campaigns_blood = session.query(db.CampaignBlood).filter_by(blood_type=user.blood_type).all()
+    campaigns = [
         {
-            'name': c.campain.name,
+            'name': c.campaign.name,
             'hospital': {
-                'name': c.campain.hospital.name,
-                'latitude': c.campain.hospital.latitude,
-                'longitude': c.campain.hospital.longitude,
+                'name': c.campaign.hospital.name,
+                'latitude': c.campaign.hospital.latitude,
+                'longitude': c.campaign.hospital.longitude,
             },
-            'message': c.campain.message,
-            'start_date': to_timestamp(c.campain.start_date),
-            'end_date': to_timestamp(c.campain.end_date)
-        } for c in campains_blood]
+            'message': c.campaign.message,
+            'start_date': to_timestamp(c.campaign.start_date),
+            'end_date': to_timestamp(c.campaign.end_date)
+        } for c in campaigns_blood]
     session.close()
 
     # return data
     return ApiResponse({
-        "campains": campains
+        "campaigns": campaigns
     })
 
 

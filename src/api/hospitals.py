@@ -46,6 +46,7 @@ def gcm_message():
             'message': 'Can\'t send a blank message...'
         })
 
+
 @hospitals.route('/donations')
 def demo_history():
     session = db.Session()
@@ -56,7 +57,7 @@ def demo_history():
         result.append({
             'user': u.user_id,
             'history': [{
-                'date': str(d.donation_date),
+                'date': to_timestamp(d.donation_date),
                 'amount': d.amount,
                 'hospital': d.hospital.name
             } for d in donations]
@@ -81,7 +82,7 @@ def demo_user_history(id):
     result = {
         'user': user.user_id,
         'history': [{
-            'date': str(d.donation_date),
+            'date': to_timestamp(d.donation_date),
             'amount': d.amount,
             'hospital': d.hospital.name
         } for d in donations]
@@ -92,9 +93,9 @@ def demo_user_history(id):
     })
 
 
-@hospitals.route('/campains/', methods=['GET'])
+@hospitals.route('/campaigns/', methods=['GET'])
 # @require_login
-def get_campains_by_bloodtype():
+def get_campaigns_by_bloodtype():
     session = db.Session()
     user_id = request.args.get('user_id', 0)
 
@@ -106,26 +107,26 @@ def get_campains_by_bloodtype():
             'message': 'No user with id {0} found'.format(user_id)
         })
 
-    campains_blood = session.query(db.CampainBlood).filter_by(blood_type=user.blood_type).all()
-    campains = [
+    campaigns_blood = session.query(db.CampaignBlood).filter_by(blood_type=user.blood_type).all()
+    campaigns = [
         {
-            'name': c.campain.name,
-            'hospital': c.campain.hospital.name,
-            'message': c.campain.message,
-            'start_date': str(c.campain.start_date),
-            'end_date': str(c.campain.end_date)
-        } for c in campains_blood]
+            'name': c.campaign.name,
+            'hospital': c.campaign.hospital.name,
+            'message': c.campaign.message,
+            'start_date': to_timestamp(c.campaign.start_date),
+            'end_date': to_timestamp(c.campaign.end_date)
+        } for c in campaigns_blood]
     session.close()
 
     # return data
     return ApiResponse({
-        "campains": campains
+        "campaigns": campaigns
     })
 
 
-@hospitals.route('/campains/', methods=['POST'])
+@hospitals.route('/campaigns/', methods=['POST'])
 # @require_login
-def create_campain():
+def create_campaign():
     session = db.Session()
     data = json.loads(request.data)
 
@@ -135,13 +136,13 @@ def create_campain():
     bloodtypes = data['bloodtypes']
     start_date = datetime.datetime.now()
     end_date = datetime.datetime.now() + datetime.timedelta(days=10)
-    campain = db.Campain(hospital._id, name, message, start_date, end_date)
-    session.add(campain)
+    campaign = db.Campaign(hospital._id, name, message, start_date, end_date)
+    session.add(campaign)
     session.commit()
 
     for bloodtype in bloodtypes:
-        campain_blood = db.CampainBlood(campain._id, bloodtype)
-        session.add(campain_blood)
+        campaign_blood = db.CampaignBlood(campaign._id, bloodtype)
+        session.add(campaign_blood)
 
     session.commit()
     session.close()
