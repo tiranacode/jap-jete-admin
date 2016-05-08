@@ -152,34 +152,18 @@ def get_users():
     return response
 
 
-# @api.route('/donations')
-# # @require_login
-# def all_past_donations():
-#     session = db.Session()
-#     users = session.query(db.User).all()
-#     result = []
-#     for u in users:
-#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
-#         result.append({
-#             'user': u.user_id,
-#             'history': [{
-#                 'date': to_timestamp(d.donation_date),
-#                 'amount': d.amount,
-#                 'hospital': d.hospital.name
-#             } for d in donations]
-#         })
-#     session.close()
-#     return ApiResponse({
-#         'history': result
-#     })
-
-
-@api.route('/donations/<id>')
+@api.route('/donations/')
+@api.route('/donations/<int:user_id>')
 @require_login
-def user_past_donations(id):
+def user_past_donations(user_id=None):
     session = db.Session()
-    user = session.query(db.User).filter_by(user_id=id).first()
+
+    if user_id is None:
+        user_id = request.args.get('user_id', 0)
+
+    user = session.query(db.User).filter_by(user_id=user_id).first()
     if not user:
+        session.close()
         return ApiResponse({
             'status': 'error',
             'message': 'No user with id {0} found'.format(id)
@@ -209,6 +193,7 @@ def get_campaigns_by_bloodtype():
     # filter by user Blood Type
     user = session.query(db.User).filter_by(user_id=user_id).first()
     if not user:
+        session.close()
         return ApiResponse({
             'status': 'error',
             'message': 'No user with id {0} found'.format(user_id)
@@ -233,22 +218,3 @@ def get_campaigns_by_bloodtype():
     return ApiResponse({
         "campaigns": campaigns
     })
-
-
-# @api.route('/hospitals/', methods=['GET'])
-# # @require_login
-# def list_hospitals():
-#     session = db.Session()
-#     hospitals = session.query(db.Hospital).all()
-#     session.close()
-#     return ApiResponse({
-#         'hospitals': [{
-#             'id': h._id,
-#             'name': h.name,
-#             'email': h.email,
-#             'address': h.address,
-#             'contact': h.contact,
-#             'latitude': h.latitude,
-#             'longitude': h.longitude
-#         } for h in hospitals]
-#     })
