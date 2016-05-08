@@ -1,5 +1,7 @@
 import React from 'react';
 import CommonUtils from './../../utils/Commons.js';
+import Rest from './../../utils/Rest.js';
+import {Endpoints} from './../../configs/Url.js';
 
 export default class Campaign extends React.Component{
     
@@ -7,18 +9,6 @@ export default class Campaign extends React.Component{
         super(params);
         this.onClick = this.onClick.bind(this);
         this.endCampaign = this.endCampaign.bind(this);
-        this.state = {
-            buttonText: "Mbyll"
-        }
-    }
-    
-    componentDidMount(){
-        var text = "Mbyll";
-        if(!this.props.data.active)
-            text = "Fillo";
-        this.setState({
-            buttonText: text
-        });
     }
     
     onClick(){
@@ -28,9 +18,37 @@ export default class Campaign extends React.Component{
     
     endCampaign(){
         //TODO: end campaign
+        var conf = confirm("Jeni te sigurt?");
+        if(conf == false) return;
+        
+        var data = {}, func = Rest.delete;
+        var endpoint = Endpoints.DeactivateCampaign;
+        
+        if(!this.props.data.active){
+            endpoint = Endpoints.ActivateCampaign;
+            func = Rest.readJSON;
+        }
+        endpoint = endpoint.replace("{0}",this.props.data.id);
+            
+        func(endpoint, data,
+            (res) => {
+                if(res.status == "ok"){
+                    //force state refresh
+                    this.props.data.active = !this.props.data.active;
+                    this.setState({ });
+                }
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
     }
     
     render(){
+        
+        var text = "Mbyll";
+        if(!this.props.data.active)
+            text = "Fillo";
         
         return(
             <div className="campaignElement" key={this.props.data.id}>
@@ -43,7 +61,7 @@ export default class Campaign extends React.Component{
                         <button 
                             onClick={this.endCampaign} 
                             className="btn"
-                        >{this.state.buttonText}</button>
+                        >{text}</button>
                     </span>
                 
                 </div>

@@ -99,8 +99,7 @@ export default class Rest {
         //TODO - Create Query Params
         fetch(url + CommonUtils.getQueryStringFromObject(param), {
             method: 'DELETE',
-            headers: HttpHeaders,
-            body: JSON.stringify(body)
+            headers: HttpHeaders
         }).then((res) => {
             res.json().then( (res) => success(res) );    
         }).catch((res) => error(res))

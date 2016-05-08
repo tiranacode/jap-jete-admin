@@ -183,7 +183,7 @@ def delete_campaign(campaign_id):
 
 
 @hospitals.route('/campaign/<campaign_id>/activate/')
-@hospital_login
+# @hospital_login
 def reactivate_campaign(campaign_id):
     session = db.Session()
     campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()

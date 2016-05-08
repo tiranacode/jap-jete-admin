@@ -68,7 +68,6 @@ export default class Campaigns extends React.Component{
      * Send edited data
      */
     editCampaign(event){
-        //TODO
         console.log("Editing")
         
         event.preventDefault();
@@ -81,7 +80,7 @@ export default class Campaigns extends React.Component{
             bloodtypes: this.state.bloodTypes
         }
         console.log(data);
-        Rest.update(Endpoints.CreateCampaign + this.state.id, data,
+        Rest.update(Endpoints.UpdateCampaign.replace("{0}",this.state.id), data,
             (res) => {
                 if(res.status && res.status == "ok")
                     self.setState({
