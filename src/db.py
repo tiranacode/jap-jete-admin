@@ -188,7 +188,7 @@ class CampaignBlood(Base):
     campaign_id = Column(BigInteger, ForeignKey('campaigns._id'))
     blood_type = Column(String(3))
 
-    campaign = relationship('Campaign', foreign_keys=[campaign_id])
+    campaign = relationship('Campaign', foreign_keys=[campaign_id], backref='requirement')
 
     def __init__(self, campaign_id, blood_type):
         self.campaign_id = campaign_id
