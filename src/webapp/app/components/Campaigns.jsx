@@ -97,6 +97,36 @@ export default class Campaigns extends React.Component{
         });
     }
     
+    componentDidMount(){
+        var data = {
+            hospital_id: 8
+        }
+        
+        Rest.readJSON( Endpoints.CampaignsList, data,
+            (res) => {
+                console.log(res);   
+                var obj = [];
+                res.campaigns.map((val) =>{
+                    obj.push({
+                        id: val.id,
+                        title: val.name,
+                        startDate: val.start_date,
+                        active: val.active,
+                        bloodTypes: val.bloodtypes,
+                        message: val.message
+                    });
+                });
+                
+                console.log(obj);
+                this.setState({
+                    campaignsList: obj
+                });
+            }, 
+            (res) => {
+                console.error(res);
+            });
+    }
+    
     render(){
         return (
             <div className="campaigns row">

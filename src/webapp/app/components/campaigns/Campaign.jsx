@@ -1,4 +1,5 @@
 import React from 'react';
+import CommonUtils from './../../utils/Commons.js';
 
 export default class Campaign extends React.Component{
     
@@ -43,7 +44,7 @@ export default class Campaign extends React.Component{
                     </span>
                 
                 </div>
-                <span>{this.props.data.startDate}</span>
+                <span>{CommonUtils.getFormattedDate(this.props.data.startDate)}</span>
             </div>
         )
     }

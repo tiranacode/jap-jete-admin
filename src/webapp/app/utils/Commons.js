@@ -19,4 +19,24 @@ export default class CommonUtils {
             return result;
         }
     }
+    
+    /**
+     * Get dd/mm/yyyy format of date
+     * @param date
+     * @returns {string}
+     */
+    static getFormattedDate(timestamp) {
+        var date = new Date(timestamp * 1000);
+        return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+    }
+
+    /**
+     * Get hh:mm format of date
+     * @param date
+     * @returns {string}
+     */
+    static getFormattedTime(timestamp) {
+        var date = new Date(timestamp * 1000);
+        return date.getHours() + ":" + date.getMinutes();
+    }
 }
