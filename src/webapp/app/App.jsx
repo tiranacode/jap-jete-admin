@@ -1,8 +1,9 @@
 import React from 'react';
-import Header from './components/Header'
+import Header from './components/Header';
+import { Router } from 'react-router';
+
 
 export default class App extends React.Component {
-    
     render() {
         return (
             <div>
@@ -13,6 +14,4 @@ export default class App extends React.Component {
             </div>
         );
     }
-    
 }
- 
