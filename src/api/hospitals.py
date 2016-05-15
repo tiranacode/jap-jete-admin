@@ -78,12 +78,11 @@ def all_hospitals():
 
 
 @hospitals.route('/campaigns/', methods=['GET'])
-# @hospital_login
+@hospital_login
 def all_campaigns():
     session = db.Session()
     hospital_id = request.args.get('hospital_id', 0)
-    #campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
-    campaigns = session.query(db.Campaign).all()
+    campaigns = session.query(db.Campaign).filter_by(hospital_id=hospital_id).all()
 
     bloodtypes = session.query()
     response = ApiResponse({
@@ -103,15 +102,13 @@ def all_campaigns():
 
 
 @hospitals.route('/campaigns/', methods=['POST'])
-# @hospital_login
+@hospital_login
 def create_campaign():
     session = db.Session()
     data = json.loads(request.data)
     hospital_id = request.args.get('hospital_id', 0)
 
-    # hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
-    hospital = session.query(db.Hospital).first()
-    
+    hospital = session.query(db.Hospital).filter_by(_id=hospital_id).first()
     name = data['name']
     message = data['message']
     bloodtypes = data['bloodtypes']
@@ -158,10 +155,45 @@ def create_campaign():
         return ApiResponse({
             'status': 'some error occurred'
         })
+    return ApiResponse({
+        'status': 'ok'
+    })
+
+@hospitals.route('/campaign/<campaign_id>', methods=['PUT'])
+@hospital_login
+def update_campaign(campaign_id):
+    data = json.loads(request.data)
+    session = db.Session()
+    campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()
+    if not campaign:
+        session.close()
+        response = ApiResponse({
+            'status': 'wrong campaign id'
+        })
+    else:
+        campaign.name = data['name']
+        campaign.message = data['message']
+        bloodtypes = data['bloodtypes']
+        old_blood_requirements = session.query(db.CampaignBlood) \
+                                .filter_by(campaign_id=campaign._id).delete()
+
+        for bloodtype in bloodtypes:
+            campaign_blood = db.CampaignBlood(campaign._id, bloodtype)
+            session.add(campaign_blood)
+
+        session.add(campaign)
+        session.commit()
+
+        response = ApiResponse({
+            'status': 'ok'
+        })
+
+    session.close()
+    return response
 
 
 @hospitals.route('/campaign/<campaign_id>', methods=['DELETE'])
-# @hospital_login
+@hospital_login
 def delete_campaign(campaign_id):
     session = db.Session()
     campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()
@@ -183,7 +215,7 @@ def delete_campaign(campaign_id):
 
 
 @hospitals.route('/campaign/<campaign_id>/activate/')
-# @hospital_login
+@hospital_login
 def reactivate_campaign(campaign_id):
     session = db.Session()
     campaign = session.query(db.Campaign).filter_by(_id=campaign_id).first()
