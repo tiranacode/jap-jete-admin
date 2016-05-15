@@ -6,6 +6,7 @@ import Donators from './app/components/Donators'
 import Campaigns from './app/components/Campaigns'
 import Login from './app/components/Login'
 
+
 //Render routes
 ReactDOM.render((
     <Router history={hashHistory}>

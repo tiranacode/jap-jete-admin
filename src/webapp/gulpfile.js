@@ -17,7 +17,6 @@ var clean = require('gulp-clean');
 // but include in your application deployment
 var dependencies = [
 	 'react',
-     'react/addons',
      'react-router'
 ];
 var bundleFile = 'bundle.js';
@@ -65,9 +64,6 @@ var browserifyTask = function (options) {
     gulp.src([options.dest], {read: false}).pipe(clean());
     rebundle();
     
-    if (!options.development) {
-        dependencies.splice(dependencies.indexOf('react/addons'), 1);
-    }
 
     // We create a separate bundle for our dependencies as they
     // should not rebundle on file changes. This only happens when
