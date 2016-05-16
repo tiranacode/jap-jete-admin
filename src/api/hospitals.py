@@ -19,15 +19,16 @@ hospitals = Blueprint('hospitals', __name__, url_prefix=BASE_PATH)
 @hospitals.route('/login/', methods=['POST'])
 def login_hospital():
     data = json.loads(request.data)
-
+    
     username = data['username']
     password = data['password'].encode('ascii', 'replace')
 
     session = db.Session()
     h = session.query(db.Hospital).filter_by(username=username).first()
-    pwd = h.password.encode('ascii', 'replace')
+    if h:
+        pwd = h.password.encode('ascii', 'replace')
 
-    if not h or bcrypt.hashpw(password, pwd) != pwd:
+    if not h or not pwd or bcrypt.hashpw(password, pwd) != pwd:
         session.close()
         return ApiResponse(config.ACCESS_DENIED_MSG, status='403')
 

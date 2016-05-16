@@ -12,7 +12,8 @@ export const Endpoints = {
     CreateCampaign: API_URL + "hospitals/campaigns/",
     UpdateCampaign: API_URL + "hospitals/campaign/{0}",
     DeactivateCampaign: API_URL + "hospitals/campaign/{0}", //DELETE
-    ActivateCampaign: API_URL + "hospitals/campaign/{0}/activate/"
+    ActivateCampaign: API_URL + "hospitals/campaign/{0}/activate/",
+    Login: API_URL + "hospitals/login/"
 };
 
 export const HttpHeaders = {

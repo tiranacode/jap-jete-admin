@@ -91,10 +91,14 @@ var browserifyTask = function (options) {
 }
 
 var cssTask = function (options) {
-    gulp.src(options.src)
-    .pipe(concat('style.css'))
-    .pipe(cssmin())
-    .pipe(gulp.dest(options.dest));   
+    var run = function() {
+        gulp.src(options.src)
+        .pipe(concat('style.css'))
+        .pipe(cssmin())
+        .pipe(gulp.dest(options.dest)); 
+    }
+    run();
+    gulp.watch(options.src, run);
 }
 
 gulp.task('clean', function(cb) {

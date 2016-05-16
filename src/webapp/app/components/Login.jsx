@@ -1,5 +1,6 @@
 import React from 'react';
 import LoginController from './../utils/LoginController';
+import { browserHistory } from 'react-router';
 
 export default class Login extends React.Component{
     
@@ -12,7 +13,8 @@ export default class Login extends React.Component{
         
         this.state = {
             user: "",
-            pass: ""
+            pass: "",
+            message: ""
         }
     }
     
@@ -30,14 +32,22 @@ export default class Login extends React.Component{
     
     login(event){
         event.preventDefault();
+        var self = this;
+        LoginController.Login(this.state.user, this.state.pass,
+        () => {
+            browserHistory.push("/");
+        }, (error) =>  {
+            self.setState({
+                message: error
+            })
+        });
         
-        //TODO
     }
     
     render(){
         return(
             <div className="login">
-                <form role="form" action="">
+                <form role="form" action="" onSubmit={this.login}>
                     <div className="form-group">
                         <input 
                             type="text" 
@@ -51,10 +61,12 @@ export default class Login extends React.Component{
                             placeholder="Fjalekalimi"
                             onChange={this.updatePassword}
                         />
+                        <span>
+                            {this.state.message}
+                        </span>
                         <input 
                             type="submit" 
                             className="form-control"
-                            onClick={this.login}
                         />
                     </div>
                 </form>
