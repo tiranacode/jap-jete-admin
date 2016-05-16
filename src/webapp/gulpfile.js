@@ -98,7 +98,8 @@ var cssTask = function (options) {
         .pipe(gulp.dest(options.dest)); 
     }
     run();
-    gulp.watch(options.src, run);
+    if(options.development)
+        gulp.watch(options.src, run);
 }
 
 gulp.task('clean', function(cb) {

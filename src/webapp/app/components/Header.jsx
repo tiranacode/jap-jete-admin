@@ -1,12 +1,22 @@
 import React from 'react';
-import Menu from './Menu'
+import Menu from './Menu';
+import LoginController from './../utils/LoginController';
 
 export default class Header extends React.Component{
     
     constructor(props){
         super(props);
+        
+        this.Logout = this.Logout.bind(this);
+        this.state = {
+            loggedIn: LoginController.LoggedIn()
+        }
+        
     }
     
+    Logout(){
+        LoginController.Logout();
+    }
     
     render(){
         return(
@@ -16,8 +26,13 @@ export default class Header extends React.Component{
                         <a className="navbar-brand" href="#">
                             <img src="webapp/static/images/logo_64.png" />
                         </a>
+                        {this.state.loggedIn ? (
+                            <a onClick={this.Logout}>Logout</a>
+                        ) : (<a />)}
                     </div>
-                    <Menu />
+                    
+                    {this.state.loggedIn ? (
+                    <Menu />) : (<span></span>)}
                 </div>
             </div>
         );

@@ -9,7 +9,6 @@ export default class App extends React.Component {
     constructor(props){
         super(props);
         this.updateAuth = this.updateAuth.bind(this);
-        this.Logout = this.Logout.bind(this);
         
         this.state = {
             loggedIn: LoginController.LoggedIn()
@@ -26,17 +25,12 @@ export default class App extends React.Component {
         LoginController.onChange = this.updateAuth;
     }
     
-    Logout(){
-        LoginController.Logout();
-    }
-    
     render() {
         return (
             <div>
                 <Header />
                 {this.state.loggedIn ? (
                     <div className="container">
-                        <a onClick={this.Logout}>Logout</a>
                         {this.props.children}
                     </div>
                 ) : (
