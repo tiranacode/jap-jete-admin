@@ -8,10 +8,17 @@ export default class Header extends React.Component{
         super(props);
         
         this.Logout = this.Logout.bind(this);
+        this.update = this.update.bind(this);
         this.state = {
             loggedIn: LoginController.LoggedIn()
         }
         
+    }
+    
+    update(loggedIn){
+        this.setState({
+            loggedIn: loggedIn
+        });
     }
     
     Logout(){

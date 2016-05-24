@@ -1,5 +1,6 @@
 import Rest from './Rest';
 import {Endpoints} from './../configs/Url';
+import CommonUtils from './Commons'
 
 module.exports = {
     
@@ -39,11 +40,17 @@ module.exports = {
         
         if(id && session_token)
             return {
-                id: id,
+                hospital_id: id,
                 session_token: session_token
             };
             
         return {};
+    },
+    
+    GetSessionAsParams(){
+        var data = this.GetSession();
+        
+        return CommonUtils.getQueryStringFromObject(data);  
     },
     
     LoggedIn(){

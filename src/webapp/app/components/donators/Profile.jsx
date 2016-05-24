@@ -55,19 +55,34 @@ export default class Profile extends React.Component{
                     <li>
                         <label>
                             <span>Emri</span>
-                            <input name="name" className="form-control" value={this.props.data.first_name} type="text" />
+                            <input 
+                                name="name" 
+                                className="form-control" 
+                                value={this.props.data.first_name} 
+                                type="text" 
+                            />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Mbiemri</span>
-                            <input name="surname" className="form-control" value={this.props.data.last_name} type="text" />
+                            <input 
+                                name="surname" 
+                                className="form-control" 
+                                value={this.props.data.last_name} 
+                                type="text" 
+                            />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Grup Gjaku</span>
-                            <input name="bloodtype" className="form-control" value={this.props.data.blood_type} type="text" />
+                            <input 
+                                name="bloodtype" 
+                                className="form-control" 
+                                value={this.props.data.blood_type} 
+                                type="text" 
+                            />
                         </label>
                     </li>
                 </ul>
