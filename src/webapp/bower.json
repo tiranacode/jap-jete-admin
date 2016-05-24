@@ -1,0 +1,23 @@
+{
+  "name": "jap-jete-admin",
+  "description": "Backend &amp; website per aplikacionin e dhurimit te gjakut \"Jap Jetë\"",
+  "main": "index.js",
+  "authors": [
+    "Rushan Xhaja <ani_xhaja@hotmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/tiranacode/jap-jete-admin",
+  "moduleType": [
+    "es6"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}
