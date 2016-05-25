@@ -17,9 +17,9 @@ export default class Campaigns extends React.Component{
         this.bloodFilterUpdate = this.bloodFilterUpdate.bind(this);
         this.editCampaign = this.editCampaign.bind(this);
         this.startCampaignEdit = this.startCampaignEdit.bind(this);
+        this.clear = this.clear.bind(this);
         
         this.state = {
-            hospital: "Qendra Spitalore Universitare Tirane",
             title: "",
             message: "",
             datetime: "",
@@ -140,6 +140,23 @@ export default class Campaigns extends React.Component{
         });
     }
     
+    clear(ev){
+        this.setState({
+            hospital: "Qendra Spitalore Universitare Tirane",
+            title: "",
+            message: "",
+            datetime: "",
+            id: 0,                                          //id of campagin when editing
+            action: "",                                     //message of request
+            bloodTypes: [],                                 //list of bloodTypes selected 
+            editMode: false,                                //wheather a campaign is being edited
+            editCampaign: null                              //the campaign in edit mode
+        
+        });
+        
+        ev.preventDefault();
+    }
+    
     componentDidMount(){
         var session = LoginController.GetSessionAsParams();
         
@@ -212,6 +229,11 @@ export default class Campaigns extends React.Component{
                                     className="btn" 
                                     value={ this.state.editMode ? "Perditeso" : "Nis"}
                                 />
+                                
+                                <button 
+                                    className="btn"
+                                    onClick={this.clear}
+                                    >Clear</button>
                             </div>
                         </form>
                     </div>
