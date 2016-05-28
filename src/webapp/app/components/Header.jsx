@@ -8,19 +8,9 @@ export default class Header extends React.Component{
         super(props);
         
         this.Logout = this.Logout.bind(this);
-        this.update = this.update.bind(this);
-        this.state = {
-            loggedIn: LoginController.LoggedIn()
-        }
         
     }
-    
-    update(loggedIn){
-        this.setState({
-            loggedIn: loggedIn
-        });
-    }
-    
+        
     Logout(){
         LoginController.Logout();
     }
@@ -33,12 +23,12 @@ export default class Header extends React.Component{
                         <a className="navbar-brand" href="#">
                             <img src="webapp/static/images/logo_64.png" />
                         </a>
-                        {this.state.loggedIn ? (
+                        {this.props.loggedIn ? (
                             <a onClick={this.Logout}>Logout</a>
                         ) : (<a />)}
                     </div>
                     
-                    {this.state.loggedIn ? (
+                    {this.props.loggedIn ? (
                     <Menu />) : (<span></span>)}
                 </div>
             </div>

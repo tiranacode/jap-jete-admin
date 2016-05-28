@@ -32,7 +32,11 @@ export default class Menu extends React.Component{
     render(){
         var items = this.state.menuItems.map(function(item) {
             return (
-                <Link className="blog-nav-item" key={item.Id} to={item.Url}>{item.Name}</Link>
+                <Link 
+                    className="blog-nav-item" 
+                    key={item.Id} 
+                    to={item.Url}
+                >{item.Name}</Link>
             );
         });
         return(
