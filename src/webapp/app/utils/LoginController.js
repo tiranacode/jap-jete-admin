@@ -20,9 +20,11 @@ module.exports = {
             else if(res && res.id){
                 var id = res.id;
                 var session_token = res.session_token;
+                var hospital = res.name;
                 
                 localStorage.setItem("id", id);
                 localStorage.setItem("session_token", session_token);
+                localStorage.setItem("hospital", hospital);
                 
                 this.onChange(true);
                 success();
@@ -37,11 +39,13 @@ module.exports = {
     GetSession(){
         var id = localStorage.getItem("id");
         var session_token = localStorage.getItem("session_token");
+        var hospital = localStorage.getItem("hospital");
         
         if(id && session_token)
             return {
                 hospital_id: id,
-                session_token: session_token
+                session_token: session_token,
+                hospital: hospital
             };
             
         return {};
@@ -60,6 +64,7 @@ module.exports = {
     Logout(){
         localStorage.removeItem("id");
         localStorage.removeItem("session_token");
+        localStorage.removeItem("hospital");
         this.onChange();
     },
     

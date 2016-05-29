@@ -19,8 +19,10 @@ export default class Campaigns extends React.Component{
         this.startCampaignEdit = this.startCampaignEdit.bind(this);
         this.clear = this.clear.bind(this);
         
+        var session = LoginController.GetSession();
         this.state = {
             title: "",
+            hospital: session.hospital,
             message: "",
             datetime: "",
             id: 0,                                          //id of campagin when editing
@@ -142,7 +144,6 @@ export default class Campaigns extends React.Component{
     
     clear(ev){
         this.setState({
-            hospital: "Qendra Spitalore Universitare Tirane",
             title: "",
             message: "",
             datetime: "",

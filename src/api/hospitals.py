@@ -37,7 +37,8 @@ def login_hospital():
     session.commit()
     response = ApiResponse({
         'id': h._id,
-        'session_token': h.session_token
+        'session_token': h.session_token,
+        'name': h.name
     })
     session.close()
     return response
