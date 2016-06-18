@@ -244,14 +244,14 @@ def edit_user_blood_type():
         'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', '0+', '0-'
     } # @TODO Move form validation in the respective class in db.py
     session = db.Session()
-    data = json.loads(request.data)
+    #data = json.loads(request.data)
     user_id = request.args.get('user_id', 0)
     hospital_id = request.args.get('hospital_id')
     user = session.query(db.User).filter_by(user_id=user_id).first()
     user_has_donated = session.query(db.UserHistory).filter_by(
         user_id=user_id, hospital_id=hospital_id).exists()
     blood_type = request.args.get('blood_type', '').upper()
-    if not user_has_donated:
+    if user_has_donated is None:
         return ApiResponse({
             'status': 'Error',
             'message': 'Permission denied.'

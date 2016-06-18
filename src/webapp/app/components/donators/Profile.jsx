@@ -1,6 +1,8 @@
 import React from 'react';
 import {Endpoints} from './../../configs/Url';
 import Constants from './../../configs/Constants';
+import LoginController from './../../utils/LoginController';
+import Rest from './../../utils/Rest';
 
 
 export default class Profile extends React.Component{
@@ -27,10 +29,24 @@ export default class Profile extends React.Component{
                 edit: true,
                 buttonText: "Ruaj"
             });
-        else this.setState({
+        else{
+            this.setState({
                 edit: false,
                 buttonText: "Ndrysho"
             });
+            var session = LoginController.GetSession();
+            session["blood_type"] = encodeURIComponent(this.state.blood_type);
+            Rest.readJSON(Endpoints.UpdateHospital, session, 
+            (res) => {
+                if(res.status == "ok"){
+                    
+                }
+            },
+            (res) => {
+                console.error(res);
+            });
+            
+        } 
     }
     
     componentWillReceiveProps(nextProps){
