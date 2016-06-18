@@ -237,6 +237,37 @@ def reactivate_campaign(campaign_id):
     session.close()
     return response
 
+@hospitals.route('/users/edit/')
+@hospital_login
+def edit_user_blood_type():
+    valid_blood_types = {
+        'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', '0+', '0-'
+    } # @TODO Move form validation in the respective class in db.py
+    session = db.Session()
+    data = json.loads(request.data)
+    user_id = request.args.get('user_id', 0)
+    hospital_id = request.args.get('hospital_id')
+    user = session.query(db.User).filter_by(user_id=user_id).first()
+    user_has_donated = session.query(db.UserHistory).filter_by(
+        user_id=user_id, hospital_id=hospital_id).exists()
+    blood_type = request.args.get('blood_type', '').upper()
+    if not user_has_donated:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Permission denied.'
+        }, status='403')
+    if blood_type not in valid_blood_types:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Bad request: %s is not a valid blood type' % blood_type,
+            }, status='400')
+
+    user.blood_type = blood_type
+    user.blood_typeF = session.query(db.BloodType).filter_by(type=blood_type).first()
+    session.commit()
+    return ApiResponse({
+        'status': 'OK'
+    })
 
 # @hospitals.route('/donations')
 # def demo_history():
