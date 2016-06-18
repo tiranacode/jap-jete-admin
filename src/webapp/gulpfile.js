@@ -17,7 +17,6 @@ var clean = require('gulp-clean');
 // but include in your application deployment
 var dependencies = [
 	 'react',
-     'react/addons',
      'react-router'
 ];
 var bundleFile = 'bundle.js';
@@ -50,9 +49,8 @@ var browserifyTask = function (options) {
             .pipe(source(bundleFile))
             .pipe(gulpif(!options.development, streamify(uglify())))
             .pipe(gulp.dest(options.dest))
-            //.pipe(gulpif(options.development, livereload()))
             .pipe(notify(function () {
-            console.log('APP bundle built in ' + (Date.now() - start) + 'ms');
+                console.log('APP bundle built in ' + (Date.now() - start) + 'ms');
             }));
     };
 
@@ -62,12 +60,8 @@ var browserifyTask = function (options) {
         appBundler.on('update', rebundle);
     }
     
-    gulp.src([options.dest], {read: false}).pipe(clean());
     rebundle();
     
-    if (!options.development) {
-        dependencies.splice(dependencies.indexOf('react/addons'), 1);
-    }
 
     // We create a separate bundle for our dependencies as they
     // should not rebundle on file changes. This only happens when
@@ -89,7 +83,7 @@ var browserifyTask = function (options) {
             .pipe(gulpif(!options.development, streamify(uglify())))
             .pipe(gulp.dest(options.dest))
             .pipe(notify(function () {
-            console.log('VENDORS bundle built in ' + (Date.now() - start) + 'ms');
+                console.log('VENDORS bundle built in ' + (Date.now() - start) + 'ms');
             }));
 
     }
@@ -97,47 +91,42 @@ var browserifyTask = function (options) {
 }
 
 var cssTask = function (options) {
-    if (options.development) {
-      var run = function () {
-        console.log(arguments);
-        var start = new Date();
-        console.log('Building CSS bundle');
+    var run = function() {
         gulp.src(options.src)
-          .pipe(concat('style.css'))
-          .pipe(gulp.dest(options.dest))
-          .pipe(notify(function () {
-            console.log('CSS bundle built in ' + (Date.now() - start) + 'ms');
-          }));
-      };
-      run();
-      gulp.watch(options.src, run);
-    } else {
-      gulp.src(options.src)
         .pipe(concat('style.css'))
-        .pipe(cssmin())
-        .pipe(gulp.dest(options.dest));   
+        .pipe(gulpif(!options.development, cssmin()))
+        .pipe(gulp.dest(options.dest)); 
     }
+    run();
+    if(options.development)
+        gulp.watch(options.src, run);
 }
 
-// Starts our development workflow
-gulp.task('default', function () {
+gulp.task('clean', function(cb) {
+    gulp.src(buildPath, {read: false}).pipe(clean());
+    cb()
+})
 
-  browserifyTask({
-    development: true,
-    src: './index.js',
-    dest: buildPath
-  });
-  
-  cssTask({
-    development: true,
-        src: './css/**/*.css',
+
+// Starts our development workflow
+gulp.task('default', ['clean'], function () {
+
+    cssTask({
+            src: './css/**/*.css',
+            dest: buildPath,
+            development: true
+    });
+
+    browserifyTask({
+        development: true,
+        src: './index.js',
         dest: buildPath
-  });
+    });
 
 });
 
 gulp.task('deploy', function () {
-
+    
     browserifyTask({
         development: false,
         src: './index.js',
@@ -145,10 +134,8 @@ gulp.task('deploy', function () {
     });
     
     cssTask({
-        development: false,
         src: './css/**/*.css',
         dest: buildPath
     });
 
 });
-

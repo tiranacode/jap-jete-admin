@@ -5,6 +5,7 @@ import UsersList from './donators/UsersList';
 import Profile from './donators/Profile';
 import Rest from './../utils/Rest';
 import {Endpoints} from './../configs/Url';
+import LoginController from './../utils/LoginController';
 
 
 export default class Donators extends React.Component{
@@ -26,7 +27,7 @@ export default class Donators extends React.Component{
         
         self = this.users;
         //sample
-        Rest.readJSON( Endpoints.Users, {},
+        Rest.readJSON( Endpoints.Users + LoginController.GetSessionAsParams(), {},
             (res) => {
                 this.setState({
                     users: res,
