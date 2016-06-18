@@ -214,7 +214,7 @@ def edit_user_blood_type():
     user_id = request.args.get('user_id', 0)
     hospital_id = request.args.get('hospital_id')
     user = session.query(db.User).filter_by(user_id=user_id).first()
-    user_has_donated = session.query(db.UserHistory).filter_by(
+    user_has_donated = session.query(db.Appointment).filter_by(
         user_id=user_id, hospital_id=hospital_id).exists()
     blood_type = request.args.get('blood_type', '').upper()
     if not user_has_donated:
@@ -231,9 +231,110 @@ def edit_user_blood_type():
     user.blood_type = blood_type
     user.blood_typeF = session.query(db.BloodType).filter_by(type=blood_type).first()
     session.commit()
+    session.close()
     return ApiResponse({
         'status': 'OK'
     })
+
+@hospitals.route('/appointments/')
+@hospital_login
+def list_appointments():
+    session = db.Session()
+    hospital_id = request.args['hospital_id']
+    # optional filters
+    status = request.args.get('status')
+    blood_type = request.args.get('blood_type')
+
+    appointments = session.query(db.Appointment).filter_by(hospital_id=hospital_id)
+    if status:
+        appointments = appointments.filter_by(status=status)
+    if blood_type:
+        appointments = appointments.filter(db.Appointment.user.has(blood_type=blood_type))
+    session.commit()
+    response = ApiResponse({
+        'status': 'OK',
+        'appointments': [
+            {
+                'time': ap.donation_time,
+                'user_fname': ap.user.first_name,
+                'user_lname': ap.user.last_name,
+                'blood_type': ap.user.blood_type,
+                'status': ap.status
+            }
+            for ap in appointments.all()
+        ]
+    })
+    session.close()
+    return response
+
+@hospitals.route('/appointments/', methods=['PUT'])
+@hospital_login
+def edit_appointment():
+    appointment_id = request.args.get('appointment_id')
+    editable_fields = [
+        'amount',
+        'status',
+        'donation_time'
+    ]
+    if not appointment_id:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'appointment_id must be specified'
+        })
+    session = db.Session()
+    appointment = session.query(db.Appointment).filter_by(_id=int(appointment_id)).first()
+    if not appointment:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Appointment with id %d does not exist' % appointment_id
+        }, status='400')
+    user = appointment.user
+    made_at_least_one_change = False
+    for field in editable_fields:
+        val = request.args.get(field)
+        if val:
+            try:
+                setattr(appointment, field, val)
+                made_at_least_one_change = True
+            except db.ValidationError:
+                session.close()
+                return ApiResponse({
+                    'status': 'Error',
+                    'message': '%s=%s is not valid' % (field, val)
+                })
+    session.commit()
+    if not made_at_least_one_change:
+        session.close()
+        return ApiResponse({
+            'status': 'OK'
+        })
+    gcmClient = GCMClient(api_key=os.environ.get('GCM_API_KEY'))
+    message = '%s ka bere ndryshime ne takimin tuaj.' % appointment.hospital.name
+    alert = {
+        'subject': 'Ndryshim i takimit',
+        'message': appointment.hospital.name,
+        'data': {
+            'id': appointment._id,
+            'hospital_name': appointment.hospital.name,
+            'message': message,
+            'time': to_timestamp(appointment.donnation_time),
+            'status': appointment.status
+        }
+    }
+
+    gcm_id_list = [user.gcm_id]
+    session.close()
+    response = gcmClient.send(gcm_id_list, alert, time_to_live=3600)
+    if response:
+        return ApiResponse({
+            'status': 'OK'
+        })
+    else:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Failed to send notification to %s' % user.first_name
+        })
+
 
 # @hospitals.route('/donations')
 # def demo_history():
@@ -241,11 +342,11 @@ def edit_user_blood_type():
 #     users = session.query(db.User).all()
 #     result = []
 #     for u in users:
-#         donations = session.query(db.UserHistory).filter_by(user_id=u.user_id).all()
+#         donations = session.query(db.Appointment).filter_by(user_id=u.user_id).all()
 #         result.append({
 #             'user': u.user_id,
 #             'history': [{
-#                 'date': to_timestamp(d.donation_date),
+#                 'date': to_timestamp(d.donation_time),
 #                 'amount': d.amount,
 #                 'hospital': d.hospital.name
 #             } for d in donations]
