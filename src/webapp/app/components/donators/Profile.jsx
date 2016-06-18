@@ -1,5 +1,6 @@
 import React from 'react';
 import {Endpoints} from './../../configs/Url';
+import Constants from './../../configs/Constants';
 
 
 export default class Profile extends React.Component{
@@ -7,9 +8,16 @@ export default class Profile extends React.Component{
     constructor(props){
         super(props);
         this.onClick = this.onClick.bind(this);
+        this.updateFirstName = this.updateFirstName.bind(this);
+        this.updateLastName = this.updateLastName.bind(this);
+        this.updateBloodType = this.updateBloodType.bind(this);
+        
         this.state = {
             edit: false,
-            buttonText: "Ndrysho"
+            buttonText: "Ndrysho",
+            first_name: '',
+            last_name: '',
+            blood_type: ''
         }
     }
     
@@ -23,6 +31,32 @@ export default class Profile extends React.Component{
                 edit: false,
                 buttonText: "Ndrysho"
             });
+    }
+    
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            first_name: nextProps.data.first_name,
+            last_name: nextProps.data.last_name,
+            blood_type: nextProps.data.blood_type
+        });
+    }
+    
+    updateFirstName(event){
+        this.setState({
+            first_name: event.target.value
+        });
+    }
+    
+    updateLastName(event){
+        this.setState({
+            last_name: event.target.value
+        });
+    }
+    
+    updateBloodType(event){
+        this.setState({
+            blood_type: event.target.value
+        });
     }
     
     render(){
@@ -49,6 +83,14 @@ export default class Profile extends React.Component{
             </div>
         );
         
+        var bloodTypes = Constants.BloodTypes.map( (val)=>{
+            return(
+                <option>
+                    {val}
+                </option>
+            );
+        } );
+        
         if(this.state.edit == true) display = (
             <div className="ProfileEdit form-data">
                 <ul>
@@ -58,8 +100,9 @@ export default class Profile extends React.Component{
                             <input 
                                 name="name" 
                                 className="form-control" 
-                                value={this.props.data.first_name} 
+                                value={this.state.first_name} 
                                 type="text" 
+                                onChange={this.updateFirstName}
                             />
                         </label>
                     </li>
@@ -69,20 +112,23 @@ export default class Profile extends React.Component{
                             <input 
                                 name="surname" 
                                 className="form-control" 
-                                value={this.props.data.last_name} 
+                                value={this.state.last_name} 
                                 type="text" 
+                                onChange={this.updateLastName}
                             />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Grup Gjaku</span>
-                            <input 
-                                name="bloodtype" 
+                            
+                            <select
+                                name="bloodtype"
                                 className="form-control" 
-                                value={this.props.data.blood_type} 
-                                type="text" 
-                            />
+                                onChange={this.updateBloodType}
+                            >
+                                {bloodTypes}
+                            </select>
                         </label>
                     </li>
                 </ul>

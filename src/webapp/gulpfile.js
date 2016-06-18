@@ -94,7 +94,7 @@ var cssTask = function (options) {
     var run = function() {
         gulp.src(options.src)
         .pipe(concat('style.css'))
-        .pipe(cssmin())
+        .pipe(gulpif(!options.development, cssmin()))
         .pipe(gulp.dest(options.dest)); 
     }
     run();
@@ -113,7 +113,8 @@ gulp.task('default', ['clean'], function () {
 
     cssTask({
             src: './css/**/*.css',
-            dest: buildPath
+            dest: buildPath,
+            development: true
     });
 
     browserifyTask({
