@@ -173,9 +173,10 @@ def user_past_donations(user_id=None):
     result = {
         'user': user.user_id,
         'history': [{
-            'date': to_timestamp(d.donation_time),
-            'amount': d.amount,
-            'hospital': d.hospital.name
+            'time': to_timestamp(d.donation_time),
+            'status': d.get_status(),
+            'id': d._id,
+            'amount': d.amount
         } for d in donations]
     }
     session.close()
@@ -184,7 +185,7 @@ def user_past_donations(user_id=None):
         'history': result
     })
 
-@api.route('/appointments/cancel/', methods=['PUT'])
+@api.route('/donations/cancel/', methods=['PUT'])
 @require_login
 def cancel_appointment():
     appointment_id = request.args.get('appointment_id')
@@ -196,7 +197,7 @@ def cancel_appointment():
             'status': 'Error',
             'message': 'Appointment with id %d does not exist' % appointment_id
         }, status='400')
-    if appointment.user_id != user_id or appointment.status == 'done':
+    if appointment.user_id != user_id or appointment.get_status() == 'done':
         return ApiResponse({
             'status': 'Error',
             'message': 'Permission denied.'

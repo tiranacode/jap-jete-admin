@@ -46,12 +46,17 @@ def seed():
     session.add(qsut)
     session.commit()
 
-    first_donation = Appointment(bexhet.user_id, qsut._id, 20)
-    first_donation.donation_time = datetime.datetime.now() - datetime.timedelta(days=10)
-    second_donation = Appointment(bexhet.user_id, qsut._id, 50)
-    second_donation.donation_time = datetime.datetime.now() - datetime.timedelta(days=50)
+    first_donation = Appointment(bexhet.user_id, qsut._id,
+                                 datetime.datetime.now() - datetime.timedelta(days=10),
+                                 status='cancelled')
+    second_donation = Appointment(bexhet.user_id, qsut._id,
+                                  datetime.datetime.now() - datetime.timedelta(days=50),
+                                  status='done')
+    third_donation = Appointment(bexhet.user_id, qsut._id,
+                                 datetime.datetime.now() + datetime.timedelta(days=1))
     session.add(first_donation)
     session.add(second_donation)
+    session.add(third_donation)
     session.commit()
 
     # campaigns
@@ -113,11 +118,12 @@ class Appointment(Base):
     user = relationship('User', foreign_keys=[user_id])
     hospital = relationship('Hospital', foreign_keys=[hospital_id])
 
-    def __init__(self, user_id, hospital_id, amount):
+    def __init__(self, user_id, hospital_id, donation_time, status=None):
         self.user_id = user_id
         self.hospital_id = hospital_id
-        self.amount = amount
-        self.donation_time = datetime.datetime.now()
+        self.donation_time = donation_time
+        self.status = status or 'pending'
+
 
     @validates('status')
     def validate_status(self, key, status):
@@ -135,10 +141,10 @@ class Appointment(Base):
             raise ValidationError('%s is not a valid status' % status)
 
     def get_status(self):
-        if self.status == 'pending' and datetime.datetime.now() > self.donation_time:
+        if self.status not in ['done', 'cancelled'] and datetime.datetime.now() > self.donation_time:
             return 'pending_input' # A Hospital Admin should set this to
                                    # "done" or "cancelled", depending on whether
-                                   # the donor showed up.
+                                   # the (potential) donor showed up.
         else:
             return self.status
 

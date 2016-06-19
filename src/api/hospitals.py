@@ -19,7 +19,7 @@ hospitals = Blueprint('hospitals', __name__, url_prefix=BASE_PATH)
 @hospitals.route('/login/', methods=['POST'])
 def login_hospital():
     data = json.loads(request.data)
-    
+
     username = data['username']
     password = data['password'].encode('ascii', 'replace')
 
@@ -277,23 +277,27 @@ def list_appointments():
     hospital_id = request.args['hospital_id']
     # optional filters
     status = request.args.get('status')
-    blood_type = request.args.get('blood_type')
+    blood_type = request.args.get('blood_type','').upper()
 
     appointments = session.query(db.Appointment).filter_by(hospital_id=hospital_id)
     if status:
         appointments = appointments.filter_by(status=status)
     if blood_type:
-        appointments = appointments.filter(db.Appointment.user.has(blood_type=blood_type))
+        appointments = appointments.join(db.Appointment.user, aliased=True,
+                                        ).filter_by(blood_type=blood_type)
+
     session.commit()
     response = ApiResponse({
         'status': 'OK',
         'appointments': [
             {
-                'time': ap.donation_time,
+                'time': to_timestamp(ap.donation_time),
                 'user_fname': ap.user.first_name,
                 'user_lname': ap.user.last_name,
                 'blood_type': ap.user.blood_type,
-                'status': ap.status
+                'status': ap.get_status(),
+                'id': ap._id,
+                'amount': ap.amount
             }
             for ap in appointments.all()
         ]
@@ -351,8 +355,9 @@ def edit_appointment():
             'id': appointment._id,
             'hospital_name': appointment.hospital.name,
             'message': message,
-            'time': to_timestamp(appointment.donnation_time),
-            'status': appointment.status
+            'time': to_timestamp(appointment.donation_time),
+            'status': appointment.get_status(),
+            'amount': appointment.amount
         }
     }
 
