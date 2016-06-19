@@ -36,6 +36,7 @@ export default class Profile extends React.Component{
             });
             var session = LoginController.GetSession();
             session["blood_type"] = encodeURIComponent(this.state.blood_type);
+            session["user_id"] = this.props.data.user_id;
             Rest.readJSON(Endpoints.UpdateHospital, session, 
             (res) => {
                 if(res.status == "ok"){
@@ -118,7 +119,7 @@ export default class Profile extends React.Component{
                                 className="form-control" 
                                 value={this.state.first_name} 
                                 type="text" 
-                                onChange={this.updateFirstName}
+                                // onChange={this.updateFirstName}
                             />
                         </label>
                     </li>
@@ -130,7 +131,7 @@ export default class Profile extends React.Component{
                                 className="form-control" 
                                 value={this.state.last_name} 
                                 type="text" 
-                                onChange={this.updateLastName}
+                                // onChange={this.updateLastName}
                             />
                         </label>
                     </li>
