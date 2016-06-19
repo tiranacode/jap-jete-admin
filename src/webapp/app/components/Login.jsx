@@ -38,39 +38,47 @@ export default class Login extends React.Component{
             browserHistory.push("/");
         }, (error) =>  {
             self.setState({
-                message: error
-            })
+                message: "Kredencialet e gabuara"
+           })
         });
         
     }
     
     render(){
-        return(
-            <div className="login">
-                <form role="form" action="" onSubmit={this.login}>
-                    <div className="form-group">
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Perdoruesi"
-                            onChange={this.updateUsername}
-                        />
-                        <input 
-                            type="password" 
-                            className="form-control" 
-                            placeholder="Fjalekalimi"
-                            onChange={this.updatePassword}
-                        />
-                        <span>
+        var state = (<div className="alert alert-danger">
                             {this.state.message}
-                        </span>
-                        <input 
-                            type="submit" 
-                            className="form-control"
-                        />
+                     </div>)
+        if (this.state.message == ""){
+            state = (<div></div>)
+        }
+
+        return(<div className="login">
+                    <div>
+                        <form role="form" action="" onSubmit={this.login}>
+                            <div className="form-group">
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Perdoruesi"
+                                    onChange={this.updateUsername}
+                                />
+                                <p></p>
+
+                                <input 
+                                    type="password" 
+                                    className="form-control" 
+                                    placeholder="Fjalekalimi"
+                                    onChange={this.updatePassword}
+                                />
+                            </div>
+                            <input 
+                                type="submit" 
+                                className="btn-primary form-control"
+                            />
+                        </form>
                     </div>
-                </form>
-            </div>
+                    {state}
+                </div>
         )
     }
     
