@@ -30,6 +30,17 @@ export default class BloodFilter extends React.Component{
     
     bloodUpdateAll(selected){
         //TODO
+        console.log(selected)
+        var types = Constants.BloodTypes;
+        if(!selected) types = [];
+        
+        this.setState({
+            bloodTypes: types
+        });
+        
+        //send bloodTypes to parent
+        // if(this.props.onUpdate)
+        //     this.props.onUpdate(this.state.bloodTypes);
     }
          
     componentWillReceiveProps(nextProps){
@@ -40,6 +51,7 @@ export default class BloodFilter extends React.Component{
     }
     
     render(){
+        console.log(this.state.bloodTypes)
         //group the filters
         var filters = [];
         for(var i=0; i<Constants.BloodTypes.length; i+=2){

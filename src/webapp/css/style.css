@@ -210,3 +210,8 @@ body{
 .campaignElement a{
     cursor: pointer;
 }
+
+.login{
+    max-width: 500px;
+    margin: auto;
+}

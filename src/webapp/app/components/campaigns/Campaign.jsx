@@ -2,6 +2,7 @@ import React from 'react';
 import CommonUtils from './../../utils/Commons.js';
 import Rest from './../../utils/Rest.js';
 import {Endpoints} from './../../configs/Url.js';
+import LoginController from './../../utils/LoginController';
 
 export default class Campaign extends React.Component{
     
@@ -21,7 +22,7 @@ export default class Campaign extends React.Component{
         var conf = confirm("Jeni te sigurt?");
         if(conf == false) return;
         
-        var data = {}, func = Rest.delete;
+        var data = LoginController.GetSessionAsParams(), func = Rest.delete;
         var endpoint = Endpoints.DeactivateCampaign;
         
         if(!this.props.data.active){
@@ -30,7 +31,7 @@ export default class Campaign extends React.Component{
         }
         endpoint = endpoint.replace("{0}",this.props.data.id);
             
-        func(endpoint, data,
+        func(endpoint + data, data,
             (res) => {
                 if(res.status == "ok"){
                     //force state refresh
