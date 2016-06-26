@@ -1,8 +1,5 @@
 import React from 'react';
 import {Endpoints} from './../../configs/Url';
-import Constants from './../../configs/Constants';
-import LoginController from './../../utils/LoginController';
-import Rest from './../../utils/Rest';
 
 
 export default class Profile extends React.Component{
@@ -10,16 +7,9 @@ export default class Profile extends React.Component{
     constructor(props){
         super(props);
         this.onClick = this.onClick.bind(this);
-        this.updateFirstName = this.updateFirstName.bind(this);
-        this.updateLastName = this.updateLastName.bind(this);
-        this.updateBloodType = this.updateBloodType.bind(this);
-        
         this.state = {
             edit: false,
-            buttonText: "Ndrysho",
-            first_name: '',
-            last_name: '',
-            blood_type: ''
+            buttonText: "Ndrysho"
         }
     }
     
@@ -29,51 +19,10 @@ export default class Profile extends React.Component{
                 edit: true,
                 buttonText: "Ruaj"
             });
-        else{
-            this.setState({
+        else this.setState({
                 edit: false,
                 buttonText: "Ndrysho"
             });
-            var session = LoginController.GetSession();
-            session["blood_type"] = encodeURIComponent(this.state.blood_type);
-            session["user_id"] = this.props.data.user_id;
-            Rest.readJSON(Endpoints.UpdateHospital, session, 
-            (res) => {
-                if(res.status == "ok"){
-                    
-                }
-            },
-            (res) => {
-                console.error(res);
-            });
-            
-        } 
-    }
-    
-    componentWillReceiveProps(nextProps){
-        this.setState({
-            first_name: nextProps.data.first_name,
-            last_name: nextProps.data.last_name,
-            blood_type: nextProps.data.blood_type
-        });
-    }
-    
-    updateFirstName(event){
-        this.setState({
-            first_name: event.target.value
-        });
-    }
-    
-    updateLastName(event){
-        this.setState({
-            last_name: event.target.value
-        });
-    }
-    
-    updateBloodType(event){
-        this.setState({
-            blood_type: event.target.value
-        });
     }
     
     render(){
@@ -100,52 +49,25 @@ export default class Profile extends React.Component{
             </div>
         );
         
-        var bloodTypes = Constants.BloodTypes.map( (val)=>{
-            return(
-                <option>
-                    {val}
-                </option>
-            );
-        } );
-        
         if(this.state.edit == true) display = (
             <div className="ProfileEdit form-data">
                 <ul>
                     <li>
                         <label>
                             <span>Emri</span>
-                            <input 
-                                name="name" 
-                                className="form-control" 
-                                value={this.state.first_name} 
-                                type="text" 
-                                // onChange={this.updateFirstName}
-                            />
+                            <input name="name" className="form-control" value={this.props.data.first_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Mbiemri</span>
-                            <input 
-                                name="surname" 
-                                className="form-control" 
-                                value={this.state.last_name} 
-                                type="text" 
-                                // onChange={this.updateLastName}
-                            />
+                            <input name="surname" className="form-control" value={this.props.data.last_name} type="text" />
                         </label>
                     </li>
                     <li>
                         <label>
                             <span>Grup Gjaku</span>
-                            
-                            <select
-                                name="bloodtype"
-                                className="form-control" 
-                                onChange={this.updateBloodType}
-                            >
-                                {bloodTypes}
-                            </select>
+                            <input name="bloodtype" className="form-control" value={this.props.data.blood_type} type="text" />
                         </label>
                     </li>
                 </ul>

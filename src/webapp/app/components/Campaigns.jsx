@@ -3,7 +3,6 @@ import BloodFilter from './forms/BloodFilter';
 import {Endpoints} from './../configs/Url';
 import Rest from './../utils/Rest';
 import CampaignsList from './campaigns/CampaignsList';
-import LoginController from './../utils/LoginController';
 
 
 export default class Campaigns extends React.Component{
@@ -17,12 +16,10 @@ export default class Campaigns extends React.Component{
         this.bloodFilterUpdate = this.bloodFilterUpdate.bind(this);
         this.editCampaign = this.editCampaign.bind(this);
         this.startCampaignEdit = this.startCampaignEdit.bind(this);
-        this.clear = this.clear.bind(this);
         
-        var session = LoginController.GetSession();
         this.state = {
+            hospital: "Qendra Spitalore Universitare Tirane",
             title: "",
-            hospital: session.hospital,
             message: "",
             datetime: "",
             id: 0,                                          //id of campagin when editing
@@ -39,19 +36,16 @@ export default class Campaigns extends React.Component{
      */
     createCampaign(event){
         event.preventDefault();
-        if(this.state.title == "" || this.state.message == "" || !LoginController.LoggedIn())
+        if(this.state.title == "" || this.state.message == "")
             return;
-            
-        var session = LoginController.GetSessionAsParams();
         var self = this;
         var data = {
             name: this.state.title,
             message: this.state.message,
             bloodtypes: this.state.bloodTypes
-            
         }
             
-        Rest.createJSON(Endpoints.CreateCampaign + session, data,
+        Rest.createJSON(Endpoints.CreateCampaign, data,
             (res) => {
                 if(res.status && res.status == "ok")
                     self.setState({
@@ -79,8 +73,6 @@ export default class Campaigns extends React.Component{
         event.preventDefault();
         if(this.state.title == "" || this.state.message == "")
             return;
-        
-        var session = LoginController.GetSessionAsParams();
         var self = this;
         var data = {
             name: this.state.title,
@@ -88,7 +80,7 @@ export default class Campaigns extends React.Component{
             bloodtypes: this.state.bloodTypes
         }
         console.log(data);
-        Rest.update(Endpoints.UpdateCampaign.replace("{0}",this.state.id) + session, data,
+        Rest.update(Endpoints.UpdateCampaign.replace("{0}",this.state.id), data,
             (res) => {
                 if(res.status && res.status == "ok")
                     self.setState({
@@ -142,26 +134,12 @@ export default class Campaigns extends React.Component{
         });
     }
     
-    clear(ev){
-        this.setState({
-            title: "",
-            message: "",
-            datetime: "",
-            id: 0,                                          //id of campagin when editing
-            action: "",                                     //message of request
-            bloodTypes: [],                                 //list of bloodTypes selected 
-            editMode: false,                                //wheather a campaign is being edited
-            editCampaign: null                              //the campaign in edit mode
-        
-        });
-        
-        ev.preventDefault();
-    }
-    
     componentDidMount(){
-        var session = LoginController.GetSessionAsParams();
+        var data = {
+            hospital_id: 8
+        }
         
-        Rest.readJSON( Endpoints.CampaignsList + session, {},
+        Rest.readJSON( Endpoints.CampaignsList, data,
             (res) => { 
                 var obj = [];
                 res.campaigns.map((val) =>{
@@ -228,13 +206,8 @@ export default class Campaigns extends React.Component{
                                     type="submit" 
                                     onClick={ this.state.editMode ? this.editCampaign : this.createCampaign} 
                                     className="btn" 
-                                    value={ this.state.editMode ? "Perditeso" : "Nis"}
+                                    value="Nis fushaten"
                                 />
-                                
-                                <button 
-                                    className="btn"
-                                    onClick={this.clear}
-                                    >Clear</button>
                             </div>
                         </form>
                     </div>
