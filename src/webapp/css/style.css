@@ -1,38 +1,41 @@
 body{
-    background-color: rgb(229,229,229);
+    background-color: #E3E3E3;
 }
 
-.head{
-    background-color: rgb(50,50,50);
-    height: 64px;
-    box-shadow: 3px 6px 5px #888;
-    margin-bottom: 20px;
+.navbar{
+    border-radius: 0px;
+    -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 10px 6px -6px #999;
+    background: #333333;
+    border:none;
 }
 
-.head-container{
-    max-width: 1170px;
-    margin: auto;
-    padding-right: 15px;
+.navbar-brand > img{
+    max-height: 35px;
 }
 
-.head-left img{
-    width: 48px;
-}
-
-.head-left{
-    height: 41px;
-}
-
-.main-menu{
-    float: right;
-}
-.main-menu a{
-    padding-left: 10px;
+.blog-nav-item{
+    padding: 10px;
     color: white;
 }
-.main-menu a:hover{
-    color: #E0894E;
+
+.menu-items{
+    padding-top: 15px;
+    float: right;
+}
+
+
+.blog-nav-item:hover{
+    background-color: red;
+    color: white;
     text-decoration: none;
+}
+
+
+.blog-nav-item a:hover, a:visited, a:link, a:active{
+    text-decoration: none;
+    color:white;
 }
 
 /***********************************************/
@@ -212,6 +215,19 @@ body{
 }
 
 .login{
-    max-width: 500px;
-    margin: auto;
+  position: absolute;
+  margin: auto;
+  max-width: 30%;
+  top: 30%;
+  right: 35%;
+  bottom: 30%;
+  left: 35%;
+}
+
+.form-control{
+    border-radius: 0px;
+}
+
+.btn-primary{
+    border:none;
 }

@@ -38,20 +38,21 @@ export default class Menu extends React.Component{
     render(){
         var items = this.state.menuItems.map(function(item) {
             return (
-                <Link 
+                <Link
                     className="blog-nav-item" 
                     key={item.Id} 
-                    to={item.Url}
-                >{item.Name}</Link>
+                    to={item.Url} > {item.Name}
+                </Link>
             );
         });
         
-        if(this.props.loggedIn) items.push(<a onClick={this.Logout}>Logout</a>);
+        if(this.props.loggedIn) items.push(<a className='blog-nav-item' 
+                                              onClick={this.Logout}>Logout</a>);
         
         return(
-            <nav className="head-right main-menu blog-nav">
+            <ul className="menu-items">
                 {items}
-            </nav>
+            </ul>
         );
     }
 }
