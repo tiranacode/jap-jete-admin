@@ -70,8 +70,6 @@ src/webapp/node_modules/
 
 #react build js
 src/webapp/static/dist/
-src/webapp/static/components
 
 package.tar.gz
 .idea
-
