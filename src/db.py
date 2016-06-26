@@ -6,8 +6,12 @@ from sqlalchemy import Column, String, BigInteger, DateTime, Integer, \
 import os
 import uuid
 import datetime, time
+from sqlalchemy.orm import validates
 
 import bcrypt
+
+class ValidationError(Exception):
+    pass
 
 Base = declarative_base()
 #postgresql://user:password@host/database
@@ -29,7 +33,7 @@ def seed():
 
     session.query(CampaignBlood).delete()
     session.query(Campaign).delete()
-    session.query(UserHistory).delete()
+    session.query(Appointment).delete()
     session.query(User).delete()
     session.query(Hospital).delete()
 
@@ -42,12 +46,17 @@ def seed():
     session.add(qsut)
     session.commit()
 
-    first_donation = UserHistory(bexhet.user_id, qsut._id, 20)
-    first_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=10)
-    second_donation = UserHistory(bexhet.user_id, qsut._id, 50)
-    second_donation.donation_date = datetime.datetime.now() - datetime.timedelta(days=50)
+    first_donation = Appointment(bexhet.user_id, qsut._id,
+                                 datetime.datetime.now() - datetime.timedelta(days=10),
+                                 status='cancelled')
+    second_donation = Appointment(bexhet.user_id, qsut._id,
+                                  datetime.datetime.now() - datetime.timedelta(days=50),
+                                  status='done')
+    third_donation = Appointment(bexhet.user_id, qsut._id,
+                                 datetime.datetime.now() + datetime.timedelta(days=1))
     session.add(first_donation)
     session.add(second_donation)
+    session.add(third_donation)
     session.commit()
 
     # campaigns
@@ -96,29 +105,54 @@ class User(Base):
         return (token, expires_at)
 
 
-class UserHistory(Base):
+class Appointment(Base):
     __tablename__ = "user_history"
 
     _id = Column(BigInteger, primary_key=True)
     user_id = Column(BigInteger, ForeignKey('users.user_id'))
     hospital_id = Column(BigInteger, ForeignKey('hospitals._id'))
     amount = Column(Integer) # how much blood was donated
-    donation_date = Column(DateTime) # when did the donation took place
-
+    donation_time = Column(DateTime) # when did the donation took place
+    status = Column(String(10)) # 'pending', 'approved', 'cancelled', 'done',
+                                # 'pending_input'
     user = relationship('User', foreign_keys=[user_id])
     hospital = relationship('Hospital', foreign_keys=[hospital_id])
 
-    def __init__(self, user_id, hospital_id, amount):
+    def __init__(self, user_id, hospital_id, donation_time, status=None):
         self.user_id = user_id
         self.hospital_id = hospital_id
-        self.amount = amount
-        self.donation_date = datetime.datetime.now()
+        self.donation_time = donation_time
+        self.status = status or 'pending'
+
+
+    @validates('status')
+    def validate_status(self, key, status):
+        valid_status_set = {
+            'pending',
+            'approved',
+            'cancelled',
+            'done',
+            'pending_input'
+        }
+        status = status.lower()
+        if status in valid_status_set:
+            return status
+        else:
+            raise ValidationError('%s is not a valid status' % status)
+
+    def get_status(self):
+        if self.status not in ['done', 'cancelled'] and datetime.datetime.now() > self.donation_time:
+            return 'pending_input' # A Hospital Admin should set this to
+                                   # "done" or "cancelled", depending on whether
+                                   # the (potential) donor showed up.
+        else:
+            return self.status
 
 class BloodType(Base):
     __tablename__ = "blood_types"
 
     _id = Column(SmallInteger, primary_key=True)
-    type = Column(String(2), unique=True)
+    type = Column(String(3), unique=True)
 
     def __init__(self, type):
         self.type = type

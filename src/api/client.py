@@ -169,18 +169,44 @@ def user_past_donations(user_id=None):
             'message': 'No user with id {0} found'.format(id)
         })
 
-    donations = session.query(db.UserHistory).filter_by(user_id=user.user_id).all()
+    donations = session.query(db.Appointment).filter_by(user_id=user.user_id).all()
     result = {
         'user': user.user_id,
         'history': [{
-            'date': to_timestamp(d.donation_date),
-            'amount': d.amount,
-            'hospital': d.hospital.name
+            'time': to_timestamp(d.donation_time),
+            'status': d.get_status(),
+            'id': d._id,
+            'amount': d.amount
         } for d in donations]
     }
     session.close()
     return ApiResponse({
+        'status': 'OK',
         'history': result
+    })
+
+@api.route('/donations/cancel/', methods=['PUT'])
+@require_login
+def cancel_appointment():
+    appointment_id = request.args.get('appointment_id')
+    user_id = int(request.args['user_id'])
+    session = db.Session()
+    appointment = session.query(db.Appointment).filter_by(_id=int(appointment_id)).first()
+    if not appointment:
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Appointment with id %d does not exist' % appointment_id
+        }, status='400')
+    if appointment.user_id != user_id or appointment.get_status() == 'done':
+        return ApiResponse({
+            'status': 'Error',
+            'message': 'Permission denied.'
+        })
+    appointment.status = 'cancelled'
+    session.commit()
+    session.close()
+    return ApiResponse({
+        'status': 'OK'
     })
 
 
