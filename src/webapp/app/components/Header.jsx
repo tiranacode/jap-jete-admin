@@ -10,14 +10,11 @@ export default class Header extends React.Component{
         
     render(){
         return(
-            <div className="head">
-                <div className="head-container">
-                    <div className="head-left">
-                        <a className="navbar-brand" href="#">
-                            <img src="webapp/static/images/logo_64.png" />
-                        </a>
-                    </div>
-                    
+            <div className="navbar navbar-default navbar-inverse" role="navigation">
+                <div className="container">
+                    <a className="navbar-brand" href="#">
+                        <img src="webapp/static/images/logo_64.png"/>
+                    </a>
                     {this.props.loggedIn ? (
                     <Menu loggedIn={this.props.loggedIn}/>) : (<span></span>)}
                 </div>
