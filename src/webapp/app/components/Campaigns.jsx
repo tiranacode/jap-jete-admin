@@ -18,6 +18,7 @@ export default class Campaigns extends React.Component{
         this.editCampaign = this.editCampaign.bind(this);
         this.startCampaignEdit = this.startCampaignEdit.bind(this);
         this.clear = this.clear.bind(this);
+        this.getCampaigns = this.getCampaigns.bind(this);
         
         var session = LoginController.GetSession();
         this.state = {
@@ -53,12 +54,14 @@ export default class Campaigns extends React.Component{
             
         Rest.createJSON(Endpoints.CreateCampaign + session, data,
             (res) => {
-                if(res.status && res.status == "ok")
+                if(res.status && res.status == "ok"){
                     self.setState({
                         title: "",
                         message: "",
                         action: "Fushata u fillua me sukses"
                     });
+                    this.getCampaigns();
+                }
                 else self.setState({
                         action: "Gabim"
                     });
@@ -90,12 +93,14 @@ export default class Campaigns extends React.Component{
         console.log(data);
         Rest.update(Endpoints.UpdateCampaign.replace("{0}",this.state.id) + session, data,
             (res) => {
-                if(res.status && res.status == "ok")
+                if(res.status && res.status == "ok"){
                     self.setState({
                         title: "",
                         message: "",
                         action: "Fushata u ndryshua me sukses"
                     });
+                    this.getCampaigns();
+                }
                 else self.setState({
                         action: "Gabim"
                     });
@@ -158,11 +163,12 @@ export default class Campaigns extends React.Component{
         ev.preventDefault();
     }
     
-    componentDidMount(){
+    getCampaigns(){
         var session = LoginController.GetSessionAsParams();
         
         Rest.readJSON( Endpoints.CampaignsList + session, {},
             (res) => { 
+                console.log(res)
                 var obj = [];
                 res.campaigns.map((val) =>{
                     obj.push({
@@ -175,6 +181,10 @@ export default class Campaigns extends React.Component{
                     });
                 });
                 
+                obj.sort( (a,b) => {
+                    return a.id - b.id;
+                });
+
                 this.setState({
                     campaignsList: obj
                 });
@@ -182,6 +192,10 @@ export default class Campaigns extends React.Component{
             (res) => {
                 console.error(res);
             });
+    }
+
+    componentDidMount(){
+        this.getCampaigns();
     }
     
     render(){
