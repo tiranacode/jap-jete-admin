@@ -20,9 +20,10 @@ export default class BloodType extends React.Component{
     }
     
     componentWillReceiveProps(nextProps){
-        this.setState({
-            selected: nextProps.selected
-        });
+        if(nextProps.selected != undefined)
+            this.setState({
+                selected: nextProps.selected
+            });
     }
     
     render(){

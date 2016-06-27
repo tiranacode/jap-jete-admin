@@ -16,6 +16,7 @@ export default class BloodFilter extends React.Component{
     bloodUpdate(selected, blood){
         var ind = this.state.bloodTypes.indexOf(blood);
         var bloodTypes = this.state.bloodTypes;
+
         if(ind >= 0) bloodTypes.splice(ind,1);
         else bloodTypes.push(blood);
         
@@ -29,18 +30,17 @@ export default class BloodFilter extends React.Component{
     }
     
     bloodUpdateAll(selected){
-        //TODO
-        console.log(selected)
-        var types = Constants.BloodTypes;
-        if(!selected) types = [];
-        
-        this.setState({
-            bloodTypes: types
-        });
-        
-        //send bloodTypes to parent
-        // if(this.props.onUpdate)
-        //     this.props.onUpdate(this.state.bloodTypes);
+        if(selected){
+            this.setState({
+                bloodTypes: Constants.BloodTypes.slice() //clone array
+            });
+        }
+        else{
+            this.setState({
+                bloodTypes: []
+            });
+        }
+
     }
          
     componentWillReceiveProps(nextProps){
@@ -70,7 +70,7 @@ export default class BloodFilter extends React.Component{
             selected = false;
             if(this.state.bloodTypes.indexOf(Constants.BloodTypes[i+1]) > -1)
                 selected = true;
-            
+                
             group.push( 
                 <BloodType 
                     key={i+1} 
@@ -95,7 +95,6 @@ export default class BloodFilter extends React.Component{
                     <BloodType 
                         blood="Te gjithe" 
                         onUpdate={this.bloodUpdateAll} 
-                        selected={false}
                     />
                 </div>
             </div>
